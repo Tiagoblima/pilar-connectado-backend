@@ -2,10 +2,52 @@ from typing import Optional
 from pydantic import BaseModel
 from fastapi import FastAPI
 import requests
-from models import Login, User
 
-
+from sql.app.models import Login, User
+from services.user import save_core
+from sqlalchemy.orm import Session
 app = FastAPI()
+
+
+
+### USER REST API ### 
+
+
+@app.post("/v1/user/")
+async def create_user(user: User):
+   
+    """
+    O endndpoint cria um usuário 
+    return: retorna o ID do usuário criado 
+    """
+
+    # TODO Acessa o banco de dados e salva o novo usuário
+    user_id = save_core(user)
+
+    return user_id
+
+
+
+#############################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -56,18 +98,6 @@ async def update_item(user_id: int, user: User):
    # TODO Acessa o banco de dados passando o ID e os dados atualizados 
    # do usuário.
    return {"msg": "Item atualizado com sucesso!"}
-
-@app.post("/v1/user/")
-async def create_user(item: User):
-   
-    """
-    O endndpoint cria um usuário 
-    return: retorna o ID do usuário criado 
-    """
-
-    # TODO Acessa o banco de dados e salva o novo usuário
-    
-    return {"user_id": 3}
 
 
 @app.delete("/v1/user/{user_id}")
