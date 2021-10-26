@@ -2,7 +2,10 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,Float
 from sqlalchemy.orm import relationship
 from .database import Base
 
+"""
+Faz o mapeamento para o banco de dados
 
+"""
 
 
 class User(Base):
@@ -12,7 +15,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
+    password = Column(String)
     name = Column(String)
     address = Column(String)
     cpf = Column(Integer, unique=True, index=True)

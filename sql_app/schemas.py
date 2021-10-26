@@ -1,6 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel
 
+"""
+Interage com o REST para o usuário.
+"""
 
 class SchemeUser(BaseModel):
     id: int # primary key
