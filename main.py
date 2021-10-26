@@ -3,8 +3,8 @@ from pydantic import BaseModel
 from fastapi import FastAPI
 import requests
 
-from sql.app.models import Login, User
-from services.user import save_core
+from sql_app.schemas import SchemeUser
+
 from sqlalchemy.orm import Session
 app = FastAPI()
 
@@ -14,7 +14,7 @@ app = FastAPI()
 
 
 @app.post("/v1/user/")
-async def create_user(user: User):
+async def create_user(user: SchemeUser):
    
     """
     O endndpoint cria um usuário 
@@ -22,9 +22,9 @@ async def create_user(user: User):
     """
 
     # TODO Acessa o banco de dados e salva o novo usuário
-    user_id = save_core(user)
+    #user_id = create_user(user)
 
-    return user_id
+    return 1
 
 
 
@@ -55,21 +55,6 @@ async def create_user(user: User):
 def read_root():
     return {"Hello": "World"}
 
-@app.get("/v1/user/login/")
-def get_user_by_login(login: Login):
-    """
-    Acessa o base de dados com as
-    informações do usuário e realiza o login
-    return: Retorna o usário pelo login
-    """
-    return {
-        "user_id": 1,
-        "name": "Foo",
-        "description": "The pretender",
-        "price": 42.0,
-        "tax": 3.2
-    }
-
 @app.get("/v1/user/{user_id}/")
 def get_user_by_id(user_id: int):
 
@@ -88,7 +73,7 @@ def get_user_by_id(user_id: int):
 
 
 @app.put("/v1/user/{user_id}/")
-async def update_item(user_id: int, user: User):
+async def update_item(user_id: int, user: SchemeUser):
    
    """
     O endendpont atualiza o usuário pelo ID

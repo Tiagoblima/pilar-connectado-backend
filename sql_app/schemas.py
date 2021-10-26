@@ -2,7 +2,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class User(BaseModel):
+class SchemeUser(BaseModel):
     id: int # primary key
     email: str # login ?
     name: str 
@@ -10,36 +10,36 @@ class User(BaseModel):
     address: str
     cpf:int
     
-class Phone(BaseModel):
+class SchemePhone(BaseModel):
     id: int # primary key
     number: str
     type: str
     id_user: int # foreign key
 
 
-class PilarMember(User):
+class SchemePilarMember(SchemeUser):
     id: int # primary key
     introduction: str
     evaluation: float
 
-class PortoMember(User):
+class SchemePortoMember(SchemeUser):
     id: int # primary key
     id_user: int
     workaddress: str
 
 
-class SkillPilarMember(BaseModel):
+class SchemeSkillPilarMember(BaseModel):
     id: int # primary key
     id_pilarmember: int # foreign key
     id_skill: int # foreign key
     xp: int
     description: str
 
-class Skill(BaseModel):
+class SchemeSkill(BaseModel):
     id: int # primary key
     name: str
     
 
-class Login(BaseModel):
+class SchemeLogin(BaseModel):
     login: str
     password: str

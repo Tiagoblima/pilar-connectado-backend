@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,Float
 from sqlalchemy.orm import relationship
-from database import Base
+from .database import Base
 
 
 
@@ -33,7 +33,7 @@ class Phone(Base):
     id_user = Column(Integer, ForeignKey("User.id"))
 
     owner = relationship("User", back_populates="Phone")
-
+   
     class Config:
         orm_mode = True
 

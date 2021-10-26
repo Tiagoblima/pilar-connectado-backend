@@ -5,3 +5,4 @@ jinja2==2.11.2
 fastapi==0.70.0
 requests
 sqlalchemy
+sql
