@@ -53,6 +53,7 @@ def create_user_item(db: Session, item: schemas.Phone, user_id: int):
 
 
 
+
 def save_core(user):
     """
     Cria um usuário no banco de dados
