@@ -1,10 +1,14 @@
 from sqlalchemy.orm import Session
-
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 
 
 import models, schemas
 
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def get_user(db: Session, user_id: int):
@@ -29,7 +33,9 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def create_user(db: Session, user: schemas.SchemeUser):
     
-    db_user = models.User(**user.dict())
+    db_user = models.User(name=user.name, address=user.address,
+                         cpf=user.cpf,email=user.email, 
+                         password=user.password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
