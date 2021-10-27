@@ -20,8 +20,8 @@ class User(Base):
     name = Column(String)
     address = Column(String)
     cpf = Column(Integer, unique=True, index=True)
-    items = relationship("Item", back_populates="owner")
-
+    
+    phone = relationship("Phone", back_populates="user")
     class Config:
         orm_mode = True
 
@@ -36,7 +36,7 @@ class Phone(Base):
     type = Column(String, index=True)
     id_user = Column(Integer, ForeignKey("User.id"))
 
-    owner = relationship("User", back_populates="Phone")
+    user = relationship("User", back_populates="Phone")
    
     class Config:
         orm_mode = True
@@ -49,7 +49,7 @@ class PilarMember(Base):
     introduction = Column(String)
     evaluation = Column(Float)
 
-    owner = relationship("User", back_populates="items")
+    owner = relationship("User", back_populates="id")
 
     class Config:
         orm_mode = True
