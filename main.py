@@ -1,99 +1,75 @@
-from typing import Optional
-from pydantic import BaseModel
+from typing import List
+
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy.orm import Session
 from fastapi import FastAPI
-import requests
+
 
 from sql_app.schemas import SchemeUser
 
 from sqlalchemy.orm import Session
 app = FastAPI()
 
+from sql_app import crud, models, schemas
+from sql_app.database import SessionLocal, engine
 
-
-### USER REST API ### 
-
-
-@app.post("/v1/user/")
-async def create_user(user: SchemeUser):
-   
-    """
-    O endndpoint cria um usuário 
-    return: retorna o ID do usuário criado 
-    """
-
-    # TODO Acessa o banco de dados e salva o novo usuário
-    #user_id = create_user(user)
-
-    return 1
-
-
-
-#############################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+models.Base.metadata.create_all(bind=engine)
 
 
 @app.get("/v1/")
 def read_root():
     return {"Hello": "World"}
 
-@app.get("/v1/user/{user_id}/")
-def get_user_by_id(user_id: int):
-
-    """
-    O endpoint retorna o usuário pelo ID
-    return: retorna as informações do usuário.
-    """
-    # TODO Acessar o banco de dados para retornar o o usuário pelo ID
-    return {
-        "user_id": 1,
-        "name": "Foo",
-        "description": "The pretender",
-        "price": 42.0,
-        "tax": 3.2
-    }
 
 
-@app.put("/v1/user/{user_id}/")
-async def update_item(user_id: int, user: SchemeUser):
-   
-   """
-    O endendpont atualiza o usuário pelo ID
-    return: retorna a mensagem se o usário foi atualizado com sucesso ou não
-   """
-
-   # TODO Acessa o banco de dados passando o ID e os dados atualizados 
-   # do usuário.
-   return {"msg": "Item atualizado com sucesso!"}
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
-@app.delete("/v1/user/{user_id}")
-async def delete_user_by_id(user_id: int):
 
-    """
-    O endpoint deleta um usuário 
-    retorn: retorna uma messagem se a delação foi com sucesso ou não
-    """
-    # TODO Acessa o banco de dados e deleta um usuário
+@app.post("/users/", response_model=schemas.SchemeUser)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_user(db=db, user=user)
 
 
-    return {"msg": "Deletado com sucesso!"}
+@app.post("/users/", response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_user(db=db, user=user)
 
+
+@app.get("/users/", response_model=List[schemas.User])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_users(db, skip=skip, limit=limit)
+    return users
+
+
+@app.get("/users/{user_id}", response_model=schemas.User)
+def read_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
+@app.post("/users/{user_id}/items/", response_model=schemas.Item)
+def create_item_for_user(
+    user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
+):
+    return crud.create_user_item(db=db, item=item, user_id=user_id)
+
+
+@app.get("/items/", response_model=List[schemas.Item])
+def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    items = crud.get_items(db, skip=skip, limit=limit)
+    return items

@@ -1,6 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,Float
 from sqlalchemy.orm import relationship
-from database import Base
+
+from .database import Base
 
 """
 Faz o mapeamento para o banco de dados
