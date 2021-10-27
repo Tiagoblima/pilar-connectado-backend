@@ -30,12 +30,15 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
 
 def create_user(db: Session, user: schemas.SchemeUser):
     
     db_user = models.User(name=user.name, address=user.address,
                          cpf=user.cpf,email=user.email, 
-                         password=user.password)
+                         password=get_password_hash(user.password))
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
