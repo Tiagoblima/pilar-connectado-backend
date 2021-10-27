@@ -6,7 +6,7 @@ Interage com o REST para o usuário.
 """
 
 class SchemeUser(BaseModel):
-    id: int # primary key
+    id: Optional[int] # primary key
     email: str # login ?
     name: str 
     password: str
