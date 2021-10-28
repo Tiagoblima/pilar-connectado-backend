@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
+from sqlalchemy.sql.sqltypes import DateTime
 
 """
 Interage com o REST para o usuário.
@@ -24,6 +25,7 @@ class SchemePilarMember(SchemeUser):
     id: int # primary key
     introduction: str
     evaluation: float
+    instagram: str
 
 class SchemePortoMember(SchemeUser):
     id: int # primary key
@@ -37,7 +39,9 @@ class SchemeSkillPilarMember(BaseModel):
     id_skill: int # foreign key
     xp: int
     description: str
-
+    startDateTime: DateTime
+    endDateTime: DateTime
+    
 class SchemeSkill(BaseModel):
     id: int # primary key
     name: str

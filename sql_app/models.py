@@ -1,5 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,Float
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql.sqltypes import DateTime
 
 from .database import Base
 
@@ -44,12 +45,11 @@ class Phone(Base):
 class PilarMember(Base):
 
     __tablename__ = "PilarMember"
-
-    id = Column(Integer, ForeignKey("User.id"), primary_key=True, index=True)
-    introduction = Column(String)
-    evaluation = Column(Float)
-   
-
+    #Column(Integer, ForeignKey("User.id"), primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
+    id_user = Column(Integer, ForeignKey("User.id"))
+    introduction = Column(String) 
+    instagram = Column(String)
     class Config:
         orm_mode = True
 
@@ -82,7 +82,9 @@ class SkillPilarMember(Base):
     id_skill = Column(Integer, ForeignKey("Skill.id"),  index=True) # foreign key
     xp = Column(Integer, index=True)
     description = Column(String)
-
+    
+    startDateTime = Column(DateTime)
+    endDateTime = Column(DateTime)
     class Config:
         orm_mode = True
 
