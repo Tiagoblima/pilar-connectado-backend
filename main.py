@@ -44,10 +44,10 @@ def create_user(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get
 @app.get("/v1/users/", response_model=List[schemas.SchemeUsers])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
-    print(
-      users[0].__dict__
-    )
-    return users
+    users2 = [{"id":user.id,"email": user.email, "password": user.password,
+     "cpf": user.cpf, "address":user.address, "name":user.name} for user in users]
+    
+    return users2
 
 
 @app.get("/v1/users/{user_id}", response_model=schemas.SchemeUsers)
