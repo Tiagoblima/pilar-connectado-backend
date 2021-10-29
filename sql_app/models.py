@@ -83,8 +83,8 @@ class SkillPilarMember(Base):
     xp = Column(Integer, index=True)
     description = Column(String)
 
-    startDateTime = Column(String)
-    endDateTime = Column(String)
+    startTime = Column(String)
+    endTime = Column(String)
     class Config:
         orm_mode = True
 
