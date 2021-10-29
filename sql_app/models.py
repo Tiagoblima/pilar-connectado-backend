@@ -82,9 +82,9 @@ class SkillPilarMember(Base):
     id_skill = Column(Integer, ForeignKey("Skill.id"),  index=True) # foreign key
     xp = Column(Integer, index=True)
     description = Column(String)
-    
-    startDateTime = Column(DateTime)
-    endDateTime = Column(DateTime)
+
+    startDateTime = Column(String)
+    endDateTime = Column(String)
     class Config:
         orm_mode = True
 

@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from sqlalchemy.sql.sqltypes import DateTime
+from sqlalchemy.sql.sqltypes import DateTime, Time
 
 """
 Interage com o REST para o usuário.
@@ -39,9 +39,9 @@ class SchemeSkillPilarMember(BaseModel):
     id_skill: int # foreign key
     xp: int
     description: str
-    startDateTime: DateTime
-    endDateTime: DateTime
-    
+    startTime: str
+    endTime: str
+
 class SchemeSkill(BaseModel):
     id: int # primary key
     name: str
