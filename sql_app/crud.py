@@ -13,28 +13,28 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def get_user(db: Session, user_id: int):
 
-    return db.query(models.User).filter(models.User.id == user_id).first()
+    return db.query(models.Users).filter(models.User.id == user_id).first()
 
 
 def get_user_by_email(db: Session, email: str):
 
-    return db.query(models.User).filter(models.User.email == email).first()
+    return db.query(models.Users).filter(models.User.email == email).first()
 
 
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
 
-    return db.query(models.User).offset(skip).limit(limit).all()
+    return db.query(models.Users).offset(skip).limit(limit).all()
 
 
 def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def create_user(db: Session, user: schemas.SchemeUser):
+def create_user(db: Session, user: schemas.SchemeUsers):
     
-    db_user = models.User(name=user.name, address=user.address,
+    db_user = models.Users(name=user.name, address=user.address,
                          cpf=user.cpf,email=user.email, 
                          password=get_password_hash(user.password))
     db.add(db_user)

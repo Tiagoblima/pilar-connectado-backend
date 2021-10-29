@@ -6,7 +6,7 @@ from sqlalchemy.sql.sqltypes import DateTime, Time
 Interage com o REST para o usuário.
 """
 
-class SchemeUser(BaseModel):
+class SchemeUsers(BaseModel):
     id: Optional[int] # primary key
     email: str # login ?
     name: str 
@@ -21,13 +21,13 @@ class SchemePhone(BaseModel):
     id_user: int # foreign key
 
 
-class SchemePilarMember(SchemeUser):
+class SchemePilarMember(SchemeUsers):
     id: int # primary key
     introduction: str
     evaluation: float
     instagram: str
 
-class SchemePortoMember(SchemeUser):
+class SchemePortoMember(SchemeUsers):
     id: int # primary key
     id_user: int
     workaddress: str
