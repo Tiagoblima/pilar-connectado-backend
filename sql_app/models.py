@@ -10,9 +10,9 @@ Faz o mapeamento para o banco de dados
 """
 
 
-class User(Base):
+class Users(Base):
 
-    __tablename__ = "User"
+    __tablename__ = "Users"
 
 
     id = Column(Integer, primary_key=True, index=True)
@@ -35,9 +35,9 @@ class Phone(Base):
     id = Column(Integer, primary_key=True, index=True)
     number = Column(Integer)
     type = Column(String, index=True)
-    id_user = Column(Integer, ForeignKey("User.id"))
+    id_user = Column(Integer, ForeignKey("Users.id"))
 
-    owener = relationship("User", back_populates="phone")
+    owener = relationship("Users", back_populates="phone")
    
     class Config:
         orm_mode = True
@@ -47,7 +47,7 @@ class PilarMember(Base):
     __tablename__ = "PilarMember"
     #Column(Integer, ForeignKey("User.id"), primary_key=True, index=True)
     id = Column(Integer, primary_key=True, index=True)
-    id_user = Column(Integer, ForeignKey("User.id"))
+    id_user = Column(Integer, ForeignKey("Users.id"))
     introduction = Column(String) 
     instagram = Column(String)
     class Config:
@@ -59,7 +59,7 @@ class PortoMember(Base):
     __tablename__ = "PortoMember"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("User.id"), index=True)
+    user_id = Column(Integer, ForeignKey("Users.id"), index=True)
     workaddress: Column(String)
 
     class Config:
