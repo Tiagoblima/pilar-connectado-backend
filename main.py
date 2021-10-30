@@ -56,6 +56,8 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 @app.get("/v1/users/{user_id}", response_model=schemas.SchemeUsers)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
+    user = {"id":db_user.id,"email": db_user.email, "password": db_user.password,
+    "cpf": db_user.cpf, "address":db_user.address, "name":db_user.name}
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+    return user
