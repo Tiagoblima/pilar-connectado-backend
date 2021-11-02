@@ -43,6 +43,14 @@ def create_user(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get
     return {"id":user.id,"email": user.email, "password": user.password,
      "cpf": user.cpf, "address":user.address, "name":user.name}
 
+    
+@app.get("/v1/users/", response_model=List[schemas.SchemeUsers])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_users(db, skip=skip, limit=limit)
+    users2 = [{"id":user.id,"email": user.email, "password": user.password,
+     "cpf": user.cpf, "address":user.address, "name":user.name} for user in users]
+    
+    return users2
 
 @app.post("/v1/pilar_member/", response_model=schemas.SchemeUsers)
 def create_pilar_member(pilar_mbm: schemas.SchemePilarMember = Body(...), db: Session = Depends(get_db)):
@@ -55,14 +63,14 @@ def create_pilar_member(pilar_mbm: schemas.SchemePilarMember = Body(...), db: Se
     return {"id":pilar_mbm.id,"introduction": pilar_mbm.introduction, "instagram": pilar_mbm.instagram,
      "id_user": pilar_mbm.id_user}
 
-@app.get("/v1/users/", response_model=List[schemas.SchemeUsers])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
-    users2 = [{"id":user.id,"email": user.email, "password": user.password,
-     "cpf": user.cpf, "address":user.address, "name":user.name} for user in users]
-    
-    return users2
 
+@app.get("/v1/pilar_member/", response_model=List[schemas.SchemePilarMember])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    pilar_mbm = crud.get_pilar_member(db, skip=skip, limit=limit)
+    pilar_mbm2 = [{"id":pilar_mbm.id,"introduction": pilar_mbm.introduction, "instagram": pilar_mbm.instagram,
+     "id_user": pilar_mbm.id_user} for pilar_mbm in pilar_mbm]
+    
+    return pilar_mbm2
 
 @app.get("/v1/users/{user_id}", response_model=schemas.SchemeUsers)
 def read_user(user_id: int, db: Session = Depends(get_db)):

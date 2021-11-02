@@ -28,6 +28,14 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Users).offset(skip).limit(limit).all()
 
 
+
+
+
+def get_pilar_member(db: Session, skip: int = 0, limit: int = 100):
+
+    return db.query(models.PilarMember).offset(skip).limit(limit).all()
+
+
 def get_password_hash(password):
     return pwd_context.hash(password)
 
