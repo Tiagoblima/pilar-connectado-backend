@@ -2,14 +2,31 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-
-
+import sqlalchemy
 from . import models, schemas
+
+
+
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
+metadata = sqlalchemy.MetaData()
+
+users = sqlalchemy.Table(
+    "Users",
+    metadata,
+    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
+    sqlalchemy.Column("email", sqlalchemy.String),
+    sqlalchemy.Column("password", sqlalchemy.Boolean),
+    sqlalchemy.Column("name", sqlalchemy.String),
+    sqlalchemy.Column("address", sqlalchemy.String),
+    sqlalchemy.Column("cpf", sqlalchemy.String),
+    
+)
 
 def get_user(db: Session, user_id: int):
 
@@ -21,14 +38,9 @@ def get_user_by_email(db: Session, email: str):
     return db.query(models.Users).filter(models.Users.email == email).first()
 
 
-
-
 def get_users(db: Session, skip: int = 0, limit: int = 100):
 
     return db.query(models.Users).offset(skip).limit(limit).all()
-
-
-
 
 
 def get_pilar_member(db: Session, skip: int = 0, limit: int = 100):
@@ -54,7 +66,7 @@ def create_pilar_member(db: Session, pilar_mbm: schemas.SchemePilarMember):
     
     db_pilar_mbm = models.PilarMember(introduction=pilar_mbm.introduction,
                                 instagram=pilar_mbm.instagram, 
-                                id_user=pilar_mbm.id_user)
+                                id_user=pilar_mbm.id_user, evaluation=pilar_mbm.evaluation)
     db.add(db_pilar_mbm)
     db.commit()
     db.refresh(db_pilar_mbm)

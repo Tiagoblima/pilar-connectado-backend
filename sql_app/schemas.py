@@ -12,7 +12,7 @@ class SchemeUsers(BaseModel):
     name: str 
     password: str
     address: str
-    cpf:int
+    cpf:str
     
 class SchemePhone(BaseModel):
     id: int # primary key
@@ -21,14 +21,14 @@ class SchemePhone(BaseModel):
     id_user: int # foreign key
 
 
-class SchemePilarMember(SchemeUsers):
+class SchemePilarMember(BaseModel):
     id: int # primary key
     id_user:int # foreign key
     introduction: str
     evaluation: float
     instagram: str
 
-class SchemePortoMember(SchemeUsers):
+class SchemePortoMember(BaseModel):
     id: int # primary key
     id_user: int
     workaddress: str

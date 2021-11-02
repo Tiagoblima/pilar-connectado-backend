@@ -32,16 +32,15 @@ def get_db():
 
 
 
-@app.post("/v1/users/", response_model=schemas.SchemeUsers)
+@app.post("/v1/users/")
 def create_user(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
+   db_user = crud.get_user_by_email(db, email=user.email)
    
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+   if db_user:
+       raise HTTPException(status_code=400, detail="Email already registered")
 
-    user = crud.create_user(db=db, user=user)
-    return {"id":user.id,"email": user.email, "password": user.password,
-     "cpf": user.cpf, "address":user.address, "name":user.name}
+   user = crud.create_user(db=db, user=user)
+   return {"id":user.id, "email":user.email, "password":user.password, "name":user.name}
 
     
 @app.get("/v1/users/", response_model=List[schemas.SchemeUsers])
@@ -52,23 +51,19 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     
     return users2
 
-@app.post("/v1/pilar_member/", response_model=schemas.SchemeUsers)
+@app.post("/v1/pilar_member/", response_model=schemas.SchemePilarMember)
 def create_pilar_member(pilar_mbm: schemas.SchemePilarMember = Body(...), db: Session = Depends(get_db)):
-    # db_user = crud.get_user_by_email(db, email=pilar_mbm.email)
-   
-    #if db_user:
-       # raise HTTPException(status_code=400, detail="Email already registered")
 
     pilar_mbm = crud.create_pilar_member(db=db, pilar_mbm=pilar_mbm)
     return {"id":pilar_mbm.id,"introduction": pilar_mbm.introduction, "instagram": pilar_mbm.instagram,
-     "id_user": pilar_mbm.id_user}
+     "id_user": pilar_mbm.id_user, "evaluation":pilar_mbm.evaluation}
 
 
 @app.get("/v1/pilar_member/", response_model=List[schemas.SchemePilarMember])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     pilar_mbm = crud.get_pilar_member(db, skip=skip, limit=limit)
     pilar_mbm2 = [{"id":pilar_mbm.id,"introduction": pilar_mbm.introduction, "instagram": pilar_mbm.instagram,
-     "id_user": pilar_mbm.id_user} for pilar_mbm in pilar_mbm]
+     "id_user": pilar_mbm.id_user, "evaluation":pilar_mbm.evaluation} for pilar_mbm in pilar_mbm]
     
     return pilar_mbm2
 

@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,Float
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.sqltypes import DateTime
+from sqlalchemy.sql.sqltypes import BigInteger, DateTime
 
 from .database import Base
 
@@ -20,7 +20,7 @@ class Users(Base):
     password = Column(String)
     name = Column(String)
     address = Column(String)
-    cpf = Column(Integer, unique=True, index=True)
+    cpf = Column(String, unique=True, index=True)
     
     phone = relationship("Phone", back_populates="owener")
     class Config:
@@ -50,6 +50,8 @@ class PilarMember(Base):
     id_user = Column(Integer, ForeignKey("Users.id"))
     introduction = Column(String) 
     instagram = Column(String)
+    evaluation = Column(Float)
+
     class Config:
         orm_mode = True
 
