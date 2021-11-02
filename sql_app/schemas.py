@@ -23,6 +23,7 @@ class SchemePhone(BaseModel):
 
 class SchemePilarMember(SchemeUsers):
     id: int # primary key
+    id_user:int # foreign key
     introduction: str
     evaluation: float
     instagram: str

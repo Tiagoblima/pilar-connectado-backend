@@ -42,7 +42,15 @@ def create_user(db: Session, user: schemas.SchemeUsers):
     db.refresh(db_user)
     return db_user
 
-
+def create_pilar_member(db: Session, pilar_mbm: schemas.SchemePilarMember):
+    
+    db_pilar_mbm = models.PilarMember(introduction=pilar_mbm.introduction,
+                                instagram=pilar_mbm.instagram, 
+                                id_user=pilar_mbm.id_user)
+    db.add(db_pilar_mbm)
+    db.commit()
+    db.refresh(db_pilar_mbm)
+    return db_pilar_mbm
 
 def get_items(db: Session, skip: int = 0, limit: int = 100):
 
