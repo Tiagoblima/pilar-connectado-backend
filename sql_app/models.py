@@ -67,6 +67,17 @@ class PortoMember(Base):
     class Config:
         orm_mode = True
 
+class PilarMemberPost(Base):
+    __tablename__ = "PilarMemberPost"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("Users.id"), index=True)
+    description: Column(String)
+    rate: Column(Integer)
+    
+    class Config:
+        orm_mode = True
+
 class Skill(Base):
     __tablename__ = "Skill"
     id =  Column(Integer, primary_key=True, index=True) # primary key

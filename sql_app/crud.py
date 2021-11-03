@@ -6,9 +6,6 @@ import sqlalchemy
 from . import models, schemas
 
 
-
-
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -25,8 +22,8 @@ users = sqlalchemy.Table(
     sqlalchemy.Column("name", sqlalchemy.String),
     sqlalchemy.Column("address", sqlalchemy.String),
     sqlalchemy.Column("cpf", sqlalchemy.String),
-    
 )
+
 
 def get_user(db: Session, user_id: int):
 
@@ -76,8 +73,6 @@ def get_items(db: Session, skip: int = 0, limit: int = 100):
 
     return db.query(models.Item).offset(skip).limit(limit).all()
 
-
-
 def create_user_item(db: Session, item: schemas.SchemePhone, user_id: int):
     db_item = models.Item(**item.dict(), owner_id=user_id)
     db.add(db_item)
@@ -85,9 +80,15 @@ def create_user_item(db: Session, item: schemas.SchemePhone, user_id: int):
     db.refresh(db_item)
     return db_item
 
+def create_post(db: Session, post: schemas.SchemePilarMemberPost):
+    db_post = models.PilarMemberPost(user_id=post.user_id,description=post.description,rate=post.rate)
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post
 
-
-
+def get_posts(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.PilarMemberPost).offset(skip).limit(limit).all()
 
 def save_core(user):
     """

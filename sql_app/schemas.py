@@ -33,6 +33,11 @@ class SchemePortoMember(BaseModel):
     id_user: int
     workaddress: str
 
+class SchemePilarMemberPost(BaseModel):
+    id: int #primary key
+    user_id: int #foreign key
+    description: str
+    rate: int
 
 class SchemeSkillPilarMember(BaseModel):
     id: int # primary key
