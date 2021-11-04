@@ -85,6 +85,6 @@ def create_post(post: schemas.SchemePilarMemberPost = Body(...), db: Session = D
 @app.get("/v1/posts/", response_model=List[schemas.SchemePilarMemberPost])
 def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_post = crud.get_posts(db, skip=skip, limit=limit)
-    returned_post = [{"id": db_post.id, "user_id": db_post.user_id, "description": db_post.description,
-                      "rate": db_post.rate} for post in db_post]
+    returned_post = [{"id": post.id, "user_id": post.user_id, "description": post.description,
+                      "rate": post.rate} for post in db_post]
     return returned_post

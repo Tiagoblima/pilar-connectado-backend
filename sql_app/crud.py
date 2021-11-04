@@ -1,3 +1,4 @@
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -23,7 +24,16 @@ users = sqlalchemy.Table(
 
 )
 
+posts = sqlalchemy.Table(
+    "PilarMemberPost",
+    metadata,
+    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
+    sqlalchemy.Column("user_id", sqlalchemy.Integer, ForeignKey("Users.id"), index=True),
+    sqlalchemy.Column("description", sqlalchemy.String),
+    sqlalchemy.Column("rate", sqlalchemy.Integer),
 
+
+)
 def get_user(db: Session, user_id: int):
     return db.query(models.Users).filter(models.Users.id == user_id).first()
 
@@ -68,8 +78,17 @@ def get_items(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Item).offset(skip).limit(limit).all()
 
 
+def get_posts(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.PilarMemberPost).offset(skip).limit(limit).all()
+
+
 def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
-    db_item = models.PilarMemberPost(**post.dict())
+
+    db_item = models.PilarMemberPost(id=post.id,
+                                     user_id=post.user_id,
+                                     description=post.description,
+                                     rate=post.rate
+                                     )
     db.add(db_item)
     db.commit()
     db.refresh(db_item)

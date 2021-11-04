@@ -1,6 +1,5 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float
+from sqlalchemy import Column, ForeignKey, Integer, String, Float
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.sqltypes import BigInteger, DateTime
 
 from .database import Base
 
@@ -58,7 +57,7 @@ class PortoMember(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("Users.id"), index=True)
-    workaddress: Column(String)
+    workaddress = Column(String)
 
     class Config:
         orm_mode = True
@@ -68,10 +67,9 @@ class PilarMemberPost(Base):
     __tablename__ = "PilarMemberPost"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("Users.id"), index=True)
-    description: Column(String)
-    rate: Column(Integer)
-
+    description = Column(String)
+    rate = Column(Integer)
+    user_id = Column(Integer, ForeignKey("Users.id"))
     class Config:
         orm_mode = True
 
