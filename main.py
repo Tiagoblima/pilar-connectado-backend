@@ -77,10 +77,8 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return user
 
 
-
 @app.get("/users/me")
 def read_current_user(username: str = Depends(get_current_username)):
-
     return {"username": username}
 
 
