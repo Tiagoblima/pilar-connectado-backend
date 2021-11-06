@@ -1,15 +1,11 @@
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Session
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
-from passlib.context import CryptContext
 import sqlalchemy
-from . import models, schemas
-import secrets
-
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.security import OAuth2PasswordBearer
+from passlib.context import CryptContext
+from sqlalchemy.orm import Session
 
+from . import models, schemas
 from .database import SessionLocal
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

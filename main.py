@@ -1,13 +1,10 @@
 from typing import List
 
-from fastapi import Depends, FastAPI, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import Depends, HTTPException
 from fastapi import FastAPI, Body
+from sqlalchemy.orm import Session
 
 from sql_app.crud import get_current_username
-from sql_app.schemas import SchemeUsers
-
-from sqlalchemy.orm import Session
 
 app = FastAPI()
 
