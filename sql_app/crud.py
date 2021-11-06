@@ -5,6 +5,12 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 import sqlalchemy
 from . import models, schemas
+import secrets
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+
+from .database import SessionLocal
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -12,28 +18,32 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 metadata = sqlalchemy.MetaData()
 
-users = sqlalchemy.Table(
-    "Users",
-    metadata,
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("email", sqlalchemy.String),
-    sqlalchemy.Column("password", sqlalchemy.Boolean),
-    sqlalchemy.Column("name", sqlalchemy.String),
-    sqlalchemy.Column("address", sqlalchemy.String),
-    sqlalchemy.Column("cpf", sqlalchemy.String),
+# users = sqlalchemy.Table(
+#     "Users",
+#     metadata,
+#     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
+#     sqlalchemy.Column("email", sqlalchemy.String),
+#     sqlalchemy.Column("password", sqlalchemy.Boolean),
+#     sqlalchemy.Column("name", sqlalchemy.String),
+#     sqlalchemy.Column("address", sqlalchemy.String),
+#     sqlalchemy.Column("cpf", sqlalchemy.String),
+#
+# )
 
-)
+# posts = sqlalchemy.Table(
+#     "PilarMemberPost",
+#     metadata,
+#     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
+#     sqlalchemy.Column("user_id", sqlalchemy.Integer, ForeignKey("Users.id"), index=True),
+#     sqlalchemy.Column("description", sqlalchemy.String),
+#     sqlalchemy.Column("rate", sqlalchemy.Integer),
+#
+#
+# )
 
-posts = sqlalchemy.Table(
-    "PilarMemberPost",
-    metadata,
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("user_id", sqlalchemy.Integer, ForeignKey("Users.id"), index=True),
-    sqlalchemy.Column("description", sqlalchemy.String),
-    sqlalchemy.Column("rate", sqlalchemy.Integer),
+security = HTTPBasic()
 
 
-)
 def get_user(db: Session, user_id: int):
     return db.query(models.Users).filter(models.Users.id == user_id).first()
 
@@ -75,15 +85,38 @@ def create_pilar_member(db: Session, pilar_mbm: schemas.SchemePilarMember):
 
 
 def get_items(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Item).offset(skip).limit(limit).all()
+    return db.query(models.Phone).offset(skip).limit(limit).all()
 
 
 def get_posts(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.PilarMemberPost).offset(skip).limit(limit).all()
 
 
-def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
 
+
+def authenticate_user(db, username: str, password: str):
+    db_user = get_user_by_email(db, email=username)
+
+    if not db_user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email não registrado.",
+                            headers={"WWW-Authenticate": "Basic"})
+
+    if not verify_password(password, db_user.password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Senha inválida",
+                            headers={"WWW-Authenticate": "Basic"})
+
+    return db_user
+
+
+def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+    db = SessionLocal()
+
+    return authenticate_user(db, username=credentials.username, password=credentials.password)
+
+
+def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
     db_item = models.PilarMemberPost(id=post.id,
                                      user_id=post.user_id,
                                      description=post.description,
@@ -95,34 +128,10 @@ def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
     return db_item
 
 
-def save_core(user):
-    """
-    Cria um usuário no banco de dados
-    """
-
-    NotImplemented
-
-
 def update(user_id, user_uptaded):
     """
     Atualiza o usuário no banco de dados
 
-    """
-
-    NotImplemented
-
-
-def get_by_id(user_id):
-    """
-    Acessa o usário no banco pelo login e retorna as informações
-    """
-
-    NotImplemented
-
-
-def get_by_login(login):
-    """
-    Acessa o usário no banco pelo ID e retorna o usuário
     """
 
     NotImplemented

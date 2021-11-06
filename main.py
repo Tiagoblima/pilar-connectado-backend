@@ -4,6 +4,7 @@ from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 from fastapi import FastAPI, Body
 
+from sql_app.crud import get_current_username
 from sql_app.schemas import SchemeUsers
 
 from sqlalchemy.orm import Session
@@ -74,6 +75,12 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+
+@app.get("/users/me")
+def read_current_user(username: str = Depends(get_current_username)):
+
+    return {"username": username}
 
 
 @app.post("/v1/posts/", response_model=schemas.SchemePilarMemberPost)
