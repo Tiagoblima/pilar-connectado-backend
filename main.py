@@ -31,7 +31,7 @@ models.Base.metadata.create_all(bind=engine)
 
 @app.get("/v1/")
 def read_root():
-    return {"Hello": "World"}
+    return {"msg": "Hello World"}
 
 
 # Dependency
