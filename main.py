@@ -6,10 +6,25 @@ from sqlalchemy.orm import Session
 
 from sql_app.crud import get_current_username
 
-app = FastAPI()
-
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
+from fastapi.middleware.cors import CORSMiddleware
+
+# Cors
+origins = [
+
+    "http://127.0.0.1:5500",
+]
+# https://pilar-connectado.herokuapp.com/v1/
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 models.Base.metadata.create_all(bind=engine)
 
