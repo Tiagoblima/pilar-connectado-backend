@@ -114,10 +114,10 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
 
 def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
     db_item = models.PilarMemberPost(
-                                     user_id=post.user_id,
-                                     description=post.description,
-                                     rate=post.rate
-                                     )
+        user_id=post.user_id,
+        description=post.description,
+        rate=post.rate
+    )
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
@@ -125,13 +125,16 @@ def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
 
 
 def create_porto_member(db, porto_mbm):
-    db_pilar_mbm = models.PilarMember(introduction=porto_mbm.introduction,
-                                      instagram=porto_mbm.instagram,
-                                      id_user=porto_mbm.id_user, evaluation=porto_mbm.evaluation)
-    db.add(db_pilar_mbm)
+    db_porto_mbm = models.PortoMember(id_user=porto_mbm.id_user, workaddress=porto_mbm.workaddress)
+    db.add(db_porto_mbm)
     db.commit()
-    db.refresh(db_pilar_mbm)
-    return db_pilar_mbm
+    db.refresh(db_porto_mbm)
+    return db_porto_mbm
+
+
+def get_porto_member(db, skip, limit):
+    return db.query(models.PortoMember).offset(skip).limit(limit).all()
+
 #
 #
 # def update(user_id, user_uptaded):

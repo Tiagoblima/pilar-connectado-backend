@@ -95,15 +95,20 @@ def read_pilar_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
 
 
 @app.post("/v1/porto_member/", response_model=schemas.SchemePortoMember)
-def create_pilar_member(porto_mbm: schemas.SchemePortoMember = Body(...), db: Session = Depends(get_db)):
+def create_porto_member(porto_mbm: schemas.SchemePortoMember = Body(...), db: Session = Depends(get_db)):
     porto_mbm = crud.create_porto_member(db=db, porto_mbm=porto_mbm)
     return {"id": porto_mbm.id, "workaddress": porto_mbm.workaddress, "id_user": porto_mbm.id_user}
 
 
-@app.get("/v1/porto_member/", response_model=schemas.SchemePortoMember)
-def create_pilar_member(porto_mbm: schemas.SchemePortoMember = Body(...), db: Session = Depends(get_db)):
-    porto_mbm = crud.create_porto_member(db=db, porto_mbm=porto_mbm)
-    return {"id": porto_mbm.id, "workaddress": porto_mbm.workaddress, "id_user": porto_mbm.id_user}
+@app.get("/v1/porto_member/", response_model=List[schemas.SchemePortoMember])
+def read_porto_member(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    porto_mbm = crud.get_porto_member(db, skip=skip, limit=limit)
+
+    porto_mbm_list = [{"id": porto_mbm.id, "workaddress": porto_mbm.workaddress, "id_user": porto_mbm.id_user}
+                      for porto_mbm in porto_mbm]
+
+    return porto_mbm_list
+
 
 
 @app.post("/v1/posts/", response_model=schemas.SchemePilarMemberPost)

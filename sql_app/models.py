@@ -56,7 +56,7 @@ class PortoMember(Base):
     __tablename__ = "PortoMember"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("Users.id"), index=True)
+    id_user = Column(Integer, ForeignKey("Users.id"), index=True)
     workaddress = Column(String)
 
     class Config:
