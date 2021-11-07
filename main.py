@@ -143,11 +143,16 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 
 
 @app.post("/v1/skill/", response_model=schemas.SchemeSkill)
-def create_post(skill: schemas.SchemeSkill = Body(...), db: Session = Depends(get_db)):
+def create_skill(skill: schemas.SchemeSkill = Body(...), db: Session = Depends(get_db)):
     skill = crud.create_skill(db=db, skill=skill)
     return {"id": skill.id,  "name": skill.name}
 
 
+@app.get("/v1/skill/", response_model=List[schemas.SchemeSkill])
+def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_skill = crud.get_skill(db, skip=skip, limit=limit)
+    returned_skill_list = [{"id": skill.id, "name": skill.name} for skill in db_skill]
+    return returned_skill_list
 
 
 

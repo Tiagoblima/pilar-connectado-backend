@@ -144,7 +144,8 @@ def create_skill(db, skill):
     return db_skill
 
 
-
+def get_skill(db, skip, limit):
+    return db.query(models.Skill).offset(skip).limit(limit).all()
 
 #
 #
