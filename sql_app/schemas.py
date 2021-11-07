@@ -50,8 +50,6 @@ class SchemeSkillPilarMember(BaseModel):
     id_skill: int  # foreign key
     xp: int
     description: str
-    startTime: str
-    endTime: str
 
 
 class SchemeSkill(BaseModel):
