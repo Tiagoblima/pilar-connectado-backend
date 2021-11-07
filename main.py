@@ -43,6 +43,9 @@ def get_db():
         db.close()
 
 
+# ----------------- REST USER ----------------
+
+
 @app.post("/v1/users/")
 def create_user(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
@@ -78,6 +81,11 @@ def read_current_user(username: str = Depends(get_current_username)):
     return {"username": username}
 
 
+# ---------------------------------------------------------------------
+
+# -----------------------REST Pilar Member ----------------------------------------
+
+
 @app.post("/v1/pilar_member/", response_model=schemas.SchemePilarMember)
 def create_pilar_member(pilar_mbm: schemas.SchemePilarMember = Body(...), db: Session = Depends(get_db)):
     pilar_mbm = crud.create_pilar_member(db=db, pilar_mbm=pilar_mbm)
@@ -93,6 +101,10 @@ def read_pilar_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
 
     return pilar_mbm_list
 
+
+# --------------------------------------------------------------
+
+# REST Porto Member --------------------------------------------------
 
 @app.post("/v1/porto_member/", response_model=schemas.SchemePortoMember)
 def create_porto_member(porto_mbm: schemas.SchemePortoMember = Body(...), db: Session = Depends(get_db)):
@@ -110,7 +122,10 @@ def read_porto_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
     return porto_mbm_list
 
 
+# ------------------------------------------------------------------------------
 
+
+# REST POSTER ----------------------------------
 @app.post("/v1/posts/", response_model=schemas.SchemePilarMemberPost)
 def create_post(post: schemas.SchemePilarMemberPost = Body(...), db: Session = Depends(get_db)):
     post = crud.create_pilar_member_post(db=db, post=post)
@@ -123,3 +138,24 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     returned_post = [{"id": post.id, "user_id": post.user_id, "description": post.description,
                       "rate": post.rate} for post in db_post]
     return returned_post
+
+# --------------------------------------------------
+
+
+@app.post("/v1/skill/", response_model=schemas.SchemeSkill)
+def create_post(skill: schemas.SchemeSkill = Body(...), db: Session = Depends(get_db)):
+    skill = crud.create_skill(db=db, skill=skill)
+    return {"id": skill.id,  "name": skill.name}
+
+
+
+
+
+
+
+
+
+
+
+
+

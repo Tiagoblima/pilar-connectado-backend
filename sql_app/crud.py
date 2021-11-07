@@ -135,6 +135,17 @@ def create_porto_member(db, porto_mbm):
 def get_porto_member(db, skip, limit):
     return db.query(models.PortoMember).offset(skip).limit(limit).all()
 
+
+def create_skill(db, skill):
+    db_skill = models.Skill(**skill.dict())
+    db.add(db_skill)
+    db.commit()
+    db.refresh(db_skill)
+    return db_skill
+
+
+
+
 #
 #
 # def update(user_id, user_uptaded):
