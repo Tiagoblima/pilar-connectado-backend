@@ -55,6 +55,12 @@ def create_pilar_member(pilar_mbm: schemas.SchemePilarMember = Body(...), db: Se
             "id_user": pilar_mbm.id_user, "evaluation": pilar_mbm.evaluation}
 
 
+@app.post("/v1/porto_member/", response_model=schemas.SchemePortoMember)
+def create_pilar_member(porto_mbm: schemas.SchemePortoMember = Body(...), db: Session = Depends(get_db)):
+    porto_mbm = crud.create_porto_member(db=db, porto_mbm=porto_mbm)
+    return {"id": porto_mbm.id, "workaddress": porto_mbm.workaddress, "id_user": porto_mbm.id_user}
+
+
 @app.get("/v1/pilar_member/", response_model=List[schemas.SchemePilarMember])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     pilar_mbm = crud.get_pilar_member(db, skip=skip, limit=limit)

@@ -113,7 +113,7 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
 
 
 def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
-    db_item = models.PilarMemberPost(id=post.id,
+    db_item = models.PilarMemberPost(
                                      user_id=post.user_id,
                                      description=post.description,
                                      rate=post.rate
@@ -124,18 +124,28 @@ def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
     return db_item
 
 
-def update(user_id, user_uptaded):
-    """
-    Atualiza o usuário no banco de dados
-
-    """
-
-    NotImplemented
-
-
-def delete(user_id):
-    """
-    Deleta o usuário do banco de dados.
-    """
-
-    NotImplemented
+def create_porto_member(db, porto_mbm):
+    db_pilar_mbm = models.PilarMember(introduction=porto_mbm.introduction,
+                                      instagram=porto_mbm.instagram,
+                                      id_user=porto_mbm.id_user, evaluation=porto_mbm.evaluation)
+    db.add(db_pilar_mbm)
+    db.commit()
+    db.refresh(db_pilar_mbm)
+    return db_pilar_mbm
+#
+#
+# def update(user_id, user_uptaded):
+#     """
+#     Atualiza o usuário no banco de dados
+#
+#     """
+#
+#     NotImplemented
+#
+#
+# def delete(user_id):
+#     """
+#     Deleta o usuário do banco de dados.
+#     """
+#
+#     NotImplemented
