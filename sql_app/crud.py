@@ -37,6 +37,26 @@ metadata = sqlalchemy.MetaData()
 #
 # )
 
+#
+#
+# def update(user_id, user_uptaded):
+#     """
+#     Atualiza o usuário no banco de dados
+#
+#     """
+#
+#     NotImplemented
+#
+#
+# def delete(user_id):
+#     """
+#     Deleta o usuário do banco de dados.
+#     """
+#
+#     NotImplemented
+
+
+
 security = HTTPBasic()
 
 
@@ -147,20 +167,14 @@ def create_skill(db, skill):
 def get_skill(db, skip, limit):
     return db.query(models.Skill).offset(skip).limit(limit).all()
 
-#
-#
-# def update(user_id, user_uptaded):
-#     """
-#     Atualiza o usuário no banco de dados
-#
-#     """
-#
-#     NotImplemented
-#
-#
-# def delete(user_id):
-#     """
-#     Deleta o usuário do banco de dados.
-#     """
-#
-#     NotImplemented
+
+def create_skill_pilar_member(db, skill_pilar_member):
+    db_skill = models.SkillPilarMember(**skill_pilar_member.dict())
+    db.add(db_skill)
+    db.commit()
+    db.refresh(db_skill)
+    return db_skill
+
+
+def get_skill_pilar_member(db, skip, limit):
+    return db.query(models.SkillPilarMember).offset(skip).limit(limit).all()

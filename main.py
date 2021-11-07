@@ -139,13 +139,15 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
                       "rate": post.rate} for post in db_post]
     return returned_post
 
+
 # --------------------------------------------------
 
+# REST SKILL -------------------------------
 
 @app.post("/v1/skill/", response_model=schemas.SchemeSkill)
 def create_skill(skill: schemas.SchemeSkill = Body(...), db: Session = Depends(get_db)):
     skill = crud.create_skill(db=db, skill=skill)
-    return {"id": skill.id,  "name": skill.name}
+    return {"id": skill.id, "name": skill.name}
 
 
 @app.get("/v1/skill/", response_model=List[schemas.SchemeSkill])
@@ -155,12 +157,20 @@ def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return returned_skill_list
 
 
+# -------------------------------------------------------
 
 
+@app.post("/v1/skill_pilar_member/", response_model=schemas.SchemeSkillPilarMember)
+def create_skill(skill_pilar_member: schemas.SchemeSkillPilarMember = Body(...), db: Session = Depends(get_db)):
+    skill_pilar_member = crud.create_skill_pilar_member(db=db, skill_pilar_member=skill_pilar_member)
+    return {"id": skill_pilar_member.id, "id_pilarmember": skill_pilar_member.id_pilarmember,
+            "id_skill": skill_pilar_member.id_skill,
+            "xp": skill_pilar_member.xp, "description": skill_pilar_member.description}
 
 
-
-
-
-
-
+@app.get("/v1/skill_pilar_member/", response_model=List[schemas.SchemeSkillPilarMember])
+def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_skill = crud.get_skill_pilar_member(db, skip=skip, limit=limit)
+    returned_skill_list = [{"id": skill_pilar_member.id, "id_pilarmember": skill_pilar_member.id_pilarmember,
+                            "id_skill": skill_pilar_member.id_skill, "xp": skill_pilar_member.xp, "description": skill_pilar_member.description} for skill_pilar_member in db_skill]
+    return returned_skill_list
