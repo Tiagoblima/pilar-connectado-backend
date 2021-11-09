@@ -143,6 +143,12 @@ def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
     db.refresh(db_item)
     return db_item
 
+def create_post(db: Session, post: schemas.SchemePilarMemberPost):
+    db_post = models.PilarMemberPost(user_id=post.user_id,description=post.description,rate=post.rate)
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post
 
 def create_porto_member(db, porto_mbm):
     db_porto_mbm = models.PortoMember(id_user=porto_mbm.id_user, workaddress=porto_mbm.workaddress)
@@ -178,3 +184,15 @@ def create_skill_pilar_member(db, skill_pilar_member):
 
 def get_skill_pilar_member(db, skip, limit):
     return db.query(models.SkillPilarMember).offset(skip).limit(limit).all()
+
+
+def create_opportunity(db: Session, opportunity: schemas.SchemeOpportunity):
+    db_opportunity = models.Opportunity(**opportunity.dict())
+    db.add(db_opportunity)
+    db.commit()
+    db.refresh(db_opportunity)
+    return db_opportunity
+
+
+def get_opportunity(db, skip, limit):
+    return db.query(models.Opportunity).offset(skip).limit(limit).all()

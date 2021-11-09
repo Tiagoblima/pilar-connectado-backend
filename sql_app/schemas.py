@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from sqlalchemy.sql.sqltypes import DateTime, Time
+from sqlalchemy.sql.sqltypes import DateTime, Time, Date
 
 """
 Interage com o REST para o usuário.
@@ -60,3 +60,14 @@ class SchemeSkill(BaseModel):
 class SchemeLogin(BaseModel):
     login: str
     password: str
+
+
+class SchemeOpportunity(BaseModel):
+    id: Optional[int]
+    id_portomember: int
+    startDate: str
+    endDate: str
+    isactive: bool
+    description: str
+    id_skill: int
+    value: float

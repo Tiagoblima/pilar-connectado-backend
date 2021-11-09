@@ -172,5 +172,34 @@ def create_skill(skill_pilar_member: schemas.SchemeSkillPilarMember = Body(...),
 def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_skill = crud.get_skill_pilar_member(db, skip=skip, limit=limit)
     returned_skill_list = [{"id": skill_pilar_member.id, "id_pilarmember": skill_pilar_member.id_pilarmember,
-                            "id_skill": skill_pilar_member.id_skill, "xp": skill_pilar_member.xp, "description": skill_pilar_member.description} for skill_pilar_member in db_skill]
+                            "id_skill": skill_pilar_member.id_skill, "xp": skill_pilar_member.xp,
+                            "description": skill_pilar_member.description} for skill_pilar_member in db_skill]
     return returned_skill_list
+
+
+# --------------------------------------------------
+
+# REST OPPORTUNITY -------------------------------
+
+
+@app.post("/v1/opportunity/", response_model=schemas.SchemeOpportunity)
+def create_opportunity(opportunity: schemas.SchemeOpportunity = Body(...), db: Session = Depends(get_db)):
+    opportunity = crud.create_opportunity(db=db, opportunity=opportunity)
+    return {
+        "id": opportunity.id, "id_portomember": opportunity.id_portomember, "startDate": opportunity.startDate,
+        "endDate": opportunity.endDate, "isactive": opportunity.isactive,
+        "description": opportunity.description,
+        "id_skill": opportunity.id_skill, "value": opportunity.value
+    }
+
+
+@app.get("/v1/opportunity/", response_model=List[schemas.SchemeOpportunity])
+def get_opportunity(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_opportunity = crud.get_opportunity(db, skip=skip, limit=limit)
+    returned_opportunity_list = [{"id": opportunity.id, "id_portomember": opportunity.id_portomember,
+                                  "startDate": opportunity.startDate,
+                                  "endDate": opportunity.endDate, "isactive": opportunity.isactive,
+                                  "description": opportunity.description,
+                                  "id_skill": opportunity.id_skill, "value": opportunity.value} for opportunity in
+                                 db_opportunity]
+    return returned_opportunity_list

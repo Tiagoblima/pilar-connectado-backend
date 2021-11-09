@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Date, Boolean
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -92,6 +92,22 @@ class SkillPilarMember(Base):
     id_skill = Column(Integer, ForeignKey("Skill.id"), index=True)  # foreign key
     xp = Column(Integer, index=True)
     description = Column(String)
+
+    class Config:
+        orm_mode = True
+
+
+class Opportunity(Base):
+    __tablename__ = "Opportunity"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id_portomember = Column(Integer, ForeignKey("PortoMember.id"), index=True)  # foreign key
+    startDate = Column(String)
+    endDate = Column(String)
+    isactive = Column(Boolean)
+    description = Column(String)
+    id_skill = Column(Integer, ForeignKey("Skill.id"), index=True)  # foreign key
+    value = Column(Float)
 
     class Config:
         orm_mode = True

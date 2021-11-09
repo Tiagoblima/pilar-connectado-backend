@@ -11,5 +11,29 @@ def test_read_main():
     assert response.json() == {"msg": "Hello World"}
 
 
+def test_get_opportunity():
+    response = client.get("/v1/opportunity/")
+    assert response.status_code == 200
+    assert type(response.json()) == list
+
+
+def test_post_opportunity():
+    response = client.post(
+        "/v1/opportunity/",
+        json={"id_portomember": 1, "startDate": "10/11/2021",
+              "endDate": "20/11/2021", "isactive": "True",
+              "description": "Serviço de construção civil",
+              "id_skill": "1", "value": 500
+              },
+    )
+    assert response.status_code == 200
+    assert response.json() == {
+        "id": 4, "id_portomember": 1, "startDate": "10/11/2021",
+        "endDate": "20/11/2021", "isactive": True,
+        "description": "Serviço de construção civil",
+        "id_skill": 1, "value": 500.0
+    }
+
+
 if __name__ == '__main__':
     unittest.main()
