@@ -235,5 +235,5 @@ def get_opportunity_by_porto_member_id(porto_member_id: int, skip: int = 0, limi
                                   "description": opportunity.description,
                                   "id_skill": opportunity.id_skill, "value": opportunity.value} for opportunity in
                                  db_opportunity]
-    print(returned_opportunity_list)
+
     return returned_opportunity_list
