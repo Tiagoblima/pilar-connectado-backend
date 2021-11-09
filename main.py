@@ -16,7 +16,7 @@ origins = [
     "http://127.0.0.1:5500",
 ]
 # https://pilar-connectado.herokuapp.com/v1/
-app = FastAPI()
+app = FastAPI(title="Pilar Connectado")
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,7 +46,7 @@ def get_db():
 # ----------------- REST USER ----------------
 
 
-@app.post("/v1/users/")
+@app.post("/v1/users/", tags=["Usuarios"])
 def create_user(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
 
@@ -57,7 +57,7 @@ def create_user(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get
     return {"id": user.id, "email": user.email, "password": user.password, "name": user.name}
 
 
-@app.get("/v1/users/", response_model=List[schemas.SchemeUsers])
+@app.get("/v1/users/", response_model=List[schemas.SchemeUsers], tags=["Usuarios"])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     users2 = [{"id": user.id, "email": user.email, "password": user.password,
@@ -66,7 +66,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return users2
 
 
-@app.get("/v1/users/{user_id}", response_model=schemas.SchemeUsers)
+@app.get("/v1/users/{user_id}", response_model=schemas.SchemeUsers, tags=["Usuarios"])
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     user = {"id": db_user.id, "email": db_user.email, "password": db_user.password,
@@ -76,7 +76,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return user
 
 
-@app.get("/users/me")
+@app.get("/users/me", tags=["Usuarios"])
 def read_current_user(username: str = Depends(get_current_username)):
     return {"username": username}
 
@@ -86,14 +86,14 @@ def read_current_user(username: str = Depends(get_current_username)):
 # -----------------------REST Pilar Member ----------------------------------------
 
 
-@app.post("/v1/pilar_member/", response_model=schemas.SchemePilarMember)
+@app.post("/v1/pilar_member/", response_model=schemas.SchemePilarMember, tags=["Pilar Member"])
 def create_pilar_member(pilar_mbm: schemas.SchemePilarMember = Body(...), db: Session = Depends(get_db)):
     pilar_mbm = crud.create_pilar_member(db=db, pilar_mbm=pilar_mbm)
     return {"id": pilar_mbm.id, "introduction": pilar_mbm.introduction, "instagram": pilar_mbm.instagram,
             "id_user": pilar_mbm.id_user, "evaluation": pilar_mbm.evaluation}
 
 
-@app.get("/v1/pilar_member/", response_model=List[schemas.SchemePilarMember])
+@app.get("/v1/pilar_member/", response_model=List[schemas.SchemePilarMember], tags=["Pilar Member"])
 def read_pilar_member(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     pilar_mbm = crud.get_pilar_member(db, skip=skip, limit=limit)
     pilar_mbm_list = [{"id": pilar_mbm.id, "introduction": pilar_mbm.introduction, "instagram": pilar_mbm.instagram,
@@ -106,13 +106,13 @@ def read_pilar_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
 
 # REST Porto Member --------------------------------------------------
 
-@app.post("/v1/porto_member/", response_model=schemas.SchemePortoMember)
+@app.post("/v1/porto_member/", response_model=schemas.SchemePortoMember, tags=["Porto Member"])
 def create_porto_member(porto_mbm: schemas.SchemePortoMember = Body(...), db: Session = Depends(get_db)):
     porto_mbm = crud.create_porto_member(db=db, porto_mbm=porto_mbm)
     return {"id": porto_mbm.id, "workaddress": porto_mbm.workaddress, "id_user": porto_mbm.id_user}
 
 
-@app.get("/v1/porto_member/", response_model=List[schemas.SchemePortoMember])
+@app.get("/v1/porto_member/", response_model=List[schemas.SchemePortoMember], tags=["Porto Member"])
 def read_porto_member(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     porto_mbm = crud.get_porto_member(db, skip=skip, limit=limit)
 
@@ -126,13 +126,13 @@ def read_porto_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
 
 
 # REST POSTER ----------------------------------
-@app.post("/v1/posts/", response_model=schemas.SchemePilarMemberPost)
+@app.post("/v1/posts/", response_model=schemas.SchemePilarMemberPost, tags=["Post"])
 def create_post(post: schemas.SchemePilarMemberPost = Body(...), db: Session = Depends(get_db)):
     post = crud.create_pilar_member_post(db=db, post=post)
     return {"id": post.id, "user_id": post.user_id, "description": post.description, "rate": post.rate}
 
 
-@app.get("/v1/posts/", response_model=List[schemas.SchemePilarMemberPost])
+@app.get("/v1/posts/", response_model=List[schemas.SchemePilarMemberPost], tags=["Post"])
 def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_post = crud.get_posts(db, skip=skip, limit=limit)
     returned_post = [{"id": post.id, "user_id": post.user_id, "description": post.description,
@@ -144,13 +144,13 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 
 # REST SKILL -------------------------------
 
-@app.post("/v1/skill/", response_model=schemas.SchemeSkill)
+@app.post("/v1/skill/", response_model=schemas.SchemeSkill, tags=["Skill"])
 def create_skill(skill: schemas.SchemeSkill = Body(...), db: Session = Depends(get_db)):
     skill = crud.create_skill(db=db, skill=skill)
     return {"id": skill.id, "name": skill.name}
 
 
-@app.get("/v1/skill/", response_model=List[schemas.SchemeSkill])
+@app.get("/v1/skill/", response_model=List[schemas.SchemeSkill], tags=["Skill"])
 def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_skill = crud.get_skill(db, skip=skip, limit=limit)
     returned_skill_list = [{"id": skill.id, "name": skill.name} for skill in db_skill]
@@ -160,7 +160,7 @@ def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 # -------------------------------------------------------
 
 
-@app.post("/v1/skill_pilar_member/", response_model=schemas.SchemeSkillPilarMember)
+@app.post("/v1/skill_pilar_member/", response_model=schemas.SchemeSkillPilarMember, tags=["Skill Pilar Member"])
 def create_skill(skill_pilar_member: schemas.SchemeSkillPilarMember = Body(...), db: Session = Depends(get_db)):
     skill_pilar_member = crud.create_skill_pilar_member(db=db, skill_pilar_member=skill_pilar_member)
     return {"id": skill_pilar_member.id, "id_pilarmember": skill_pilar_member.id_pilarmember,
@@ -168,7 +168,7 @@ def create_skill(skill_pilar_member: schemas.SchemeSkillPilarMember = Body(...),
             "xp": skill_pilar_member.xp, "description": skill_pilar_member.description}
 
 
-@app.get("/v1/skill_pilar_member/", response_model=List[schemas.SchemeSkillPilarMember])
+@app.get("/v1/skill_pilar_member/", response_model=List[schemas.SchemeSkillPilarMember], tags=["Skill Pilar Member"])
 def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_skill = crud.get_skill_pilar_member(db, skip=skip, limit=limit)
     returned_skill_list = [{"id": skill_pilar_member.id, "id_pilarmember": skill_pilar_member.id_pilarmember,
@@ -182,7 +182,7 @@ def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 # REST OPPORTUNITY -------------------------------
 
 
-@app.post("/v1/opportunity/", response_model=schemas.SchemeOpportunity)
+@app.post("/v1/opportunity/", response_model=schemas.SchemeOpportunity, tags=["Opportunity"])
 def create_opportunity(opportunity: schemas.SchemeOpportunity = Body(...), db: Session = Depends(get_db)):
     opportunity = crud.create_opportunity(db=db, opportunity=opportunity)
     return {
@@ -193,7 +193,7 @@ def create_opportunity(opportunity: schemas.SchemeOpportunity = Body(...), db: S
     }
 
 
-@app.get("/v1/opportunity/", response_model=List[schemas.SchemeOpportunity])
+@app.get("/v1/opportunity/", response_model=List[schemas.SchemeOpportunity], tags=["Opportunity"])
 def get_opportunity(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_opportunity = crud.get_opportunity(db, skip=skip, limit=limit)
     returned_opportunity_list = [{"id": opportunity.id, "id_portomember": opportunity.id_portomember,
