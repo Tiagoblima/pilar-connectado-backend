@@ -56,7 +56,6 @@ metadata = sqlalchemy.MetaData()
 #     NotImplemented
 
 
-
 security = HTTPBasic()
 
 
@@ -74,6 +73,13 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 def get_pilar_member(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.PilarMember).offset(skip).limit(limit).all()
+
+
+def get_member(db, id_user):
+    response = db.query(models.PilarMember).filter(models.PilarMember.id_user == id_user).first()
+    if not response:
+        response = db.query(models.PortoMember).filter(models.PortoMember.id_user == id_user).first()
+    return response
 
 
 def get_password_hash(password):
@@ -143,12 +149,14 @@ def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
     db.refresh(db_item)
     return db_item
 
+
 def create_post(db: Session, post: schemas.SchemePilarMemberPost):
-    db_post = models.PilarMemberPost(user_id=post.user_id,description=post.description,rate=post.rate)
+    db_post = models.PilarMemberPost(user_id=post.user_id, description=post.description, rate=post.rate)
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
     return db_post
+
 
 def create_porto_member(db, porto_mbm):
     db_porto_mbm = models.PortoMember(id_user=porto_mbm.id_user, workaddress=porto_mbm.workaddress)

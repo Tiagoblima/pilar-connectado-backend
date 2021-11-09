@@ -81,6 +81,15 @@ def read_current_user(username: str = Depends(get_current_username)):
     return {"username": username}
 
 
+@app.get("/v1/member/{id_user}/", tags=["Usuarios"])
+def read_pilar_member(id_user: int, db: Session = Depends(get_db)):
+    member = crud.get_member(db, id_user=id_user)
+
+    member_json = {key: value for key, value in member.__dict__.items() if value is not None}
+
+    return member_json
+
+
 # ---------------------------------------------------------------------
 
 # -----------------------REST Pilar Member ----------------------------------------
