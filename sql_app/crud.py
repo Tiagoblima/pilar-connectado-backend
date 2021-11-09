@@ -204,3 +204,12 @@ def create_opportunity(db: Session, opportunity: schemas.SchemeOpportunity):
 
 def get_opportunity(db, skip, limit):
     return db.query(models.Opportunity).offset(skip).limit(limit).all()
+
+
+def get_opportunity_by_id(db, op_id):
+    return db.query(models.Opportunity).filter(models.Opportunity.id == op_id).first()
+
+
+def get_opportunity_by_porto_member_id(db, id_porto_member, skip, limit):
+    return db.query(models.Opportunity).filter(models.Opportunity.id_portomember == id_porto_member). \
+        offset(skip).limit(limit).all()

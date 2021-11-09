@@ -212,3 +212,28 @@ def get_opportunity(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
                                   "id_skill": opportunity.id_skill, "value": opportunity.value} for opportunity in
                                  db_opportunity]
     return returned_opportunity_list
+
+
+@app.get("/v1/opportunity/by/id/{op_id}/", response_model=schemas.SchemeOpportunity, tags=["Opportunity"])
+def get_opportunity_by_id(op_id: int, db: Session = Depends(get_db)):
+    opportunity = crud.get_opportunity_by_id(db, op_id=op_id)
+    # returned_opportunity_list = [ for opportunity in
+    #                              db_opportunity]
+    return {"id": opportunity.id, "id_portomember": opportunity.id_portomember,
+            "startDate": opportunity.startDate,
+            "endDate": opportunity.endDate, "isactive": opportunity.isactive,
+            "description": opportunity.description,
+            "id_skill": opportunity.id_skill, "value": opportunity.value}
+
+
+@app.get("/v1/opportunity/by/porto_member_id/{porto_member_id}/", response_model=List[schemas.SchemeOpportunity], tags=["Opportunity"])
+def get_opportunity_by_porto_member_id(porto_member_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_opportunity = crud.get_opportunity_by_porto_member_id(db, id_porto_member=porto_member_id,skip=skip, limit=limit)
+    returned_opportunity_list = [{"id": opportunity.id, "id_portomember": opportunity.id_portomember,
+                                  "startDate": opportunity.startDate,
+                                  "endDate": opportunity.endDate, "isactive": opportunity.isactive,
+                                  "description": opportunity.description,
+                                  "id_skill": opportunity.id_skill, "value": opportunity.value} for opportunity in
+                                 db_opportunity]
+    print(returned_opportunity_list)
+    return returned_opportunity_list
