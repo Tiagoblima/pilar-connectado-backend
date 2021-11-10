@@ -82,6 +82,25 @@ def get_member(db, id_user):
     return response
 
 
+def get_pilar_member_by_skill(db, id_skill, skip, limit):
+    skill_pilar_member = db.query(models.SkillPilarMember).filter(models.SkillPilarMember.id_skill == id_skill).offset(skip).limit(limit).all()
+
+    users_list = []
+    for skill_pilar in skill_pilar_member:
+
+        pilar_member = db.query(models.PilarMember).filter(models.PilarMember.id == skill_pilar.id_pilarmember).first().__dict__
+        user = db.query(models.Users).filter(models.Users.id == pilar_member["id_user"]).first().__dict__
+        user.update(pilar_member)
+        user.update(skill_pilar.__dict__)
+        user.pop("password")
+        user.pop("id_pilarmember")
+        user.pop("id")
+        user.pop("id_skill")
+        users_list.append(user)
+
+    return users_list
+
+
 def get_password_hash(password):
     return pwd_context.hash(password)
 

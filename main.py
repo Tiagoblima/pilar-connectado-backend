@@ -111,6 +111,13 @@ def read_pilar_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
     return pilar_mbm_list
 
 
+@app.get("/v1/pilar_member/by/skill/{id_skill}/", tags=["Pilar Member"])
+def read_pilar_member_by_skill(id_skill: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_pilar_member_by_skill(db, id_skill=id_skill, skip=skip, limit=limit)
+
+    return users
+
+
 # --------------------------------------------------------------
 
 # REST Porto Member --------------------------------------------------
@@ -226,9 +233,12 @@ def get_opportunity_by_id(op_id: int, db: Session = Depends(get_db)):
             "id_skill": opportunity.id_skill, "value": opportunity.value}
 
 
-@app.get("/v1/opportunity/by/porto_member_id/{porto_member_id}/", response_model=List[schemas.SchemeOpportunity], tags=["Opportunity"])
-def get_opportunity_by_porto_member_id(porto_member_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    db_opportunity = crud.get_opportunity_by_porto_member_id(db, id_porto_member=porto_member_id,skip=skip, limit=limit)
+@app.get("/v1/opportunity/by/porto_member_id/{porto_member_id}/", response_model=List[schemas.SchemeOpportunity],
+         tags=["Opportunity"])
+def get_opportunity_by_porto_member_id(porto_member_id: int, skip: int = 0, limit: int = 100,
+                                       db: Session = Depends(get_db)):
+    db_opportunity = crud.get_opportunity_by_porto_member_id(db, id_porto_member=porto_member_id, skip=skip,
+                                                             limit=limit)
     returned_opportunity_list = [{"id": opportunity.id, "id_portomember": opportunity.id_portomember,
                                   "startDate": opportunity.startDate,
                                   "endDate": opportunity.endDate, "isactive": opportunity.isactive,
