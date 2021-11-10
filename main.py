@@ -256,3 +256,10 @@ def create_match(match: schemas.SchemeMatch = Body(...), db: Session = Depends(g
     match = crud.create_match(db=db, match=match)
     return {"id": match.id, "id_opportunity": match.id_opportunity, "id_pilarmember": match.id_pilarmember,
             "approved": match.approved}
+
+
+@app.get("/v1/match/", response_model=List[schemas.SchemeMatch], tags=["Match"])
+def get_match(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    match_list = crud.get_match(db=db, skip=skip, limit=limit)
+    return [{"id": match.id, "id_opportunity": match.id_opportunity, "id_pilarmember": match.id_pilarmember,
+             "approved": match.approved} for match in match_list]

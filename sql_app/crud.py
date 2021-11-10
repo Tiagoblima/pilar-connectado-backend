@@ -241,3 +241,7 @@ def create_match(db, match: schemas.SchemeMatch):
     db.commit()
     db.refresh(db_match)
     return db_match
+
+
+def get_match(db, skip, limit):
+    return db.query(models.Match).offset(skip).limit(limit).all()
