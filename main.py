@@ -249,6 +249,18 @@ def get_opportunity_by_porto_member_id(porto_member_id: int, skip: int = 0, limi
     return returned_opportunity_list
 
 
+@app.get("/v1/opportunity/by/skill/{id_skill}/", response_model=List[schemas.SchemeOpportunity], tags=["Opportunity"])
+def get_opportunity_by_id(id_skill: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_opportunity = crud.get_opportunity_by_id_skill(db, id_skill=id_skill, skip=skip, limit=limit)
+    returned_opportunity_list = [{"id": opportunity.id, "id_portomember": opportunity.id_portomember,
+                                  "startDate": opportunity.startDate,
+                                  "endDate": opportunity.endDate, "isactive": opportunity.isactive,
+                                  "description": opportunity.description,
+                                  "id_skill": opportunity.id_skill, "value": opportunity.value} for opportunity in
+                                 db_opportunity]
+    return returned_opportunity_list
+
+
 # Match REST
 
 @app.post("/v1/match/", response_model=schemas.SchemeMatch, tags=["Match"])

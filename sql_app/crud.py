@@ -245,3 +245,8 @@ def create_match(db, match: schemas.SchemeMatch):
 
 def get_match(db, skip, limit):
     return db.query(models.Match).offset(skip).limit(limit).all()
+
+
+def get_opportunity_by_id_skill(db, id_skill, skip, limit):
+    return db.query(models.Opportunity).filter(models.Opportunity.id_skill == id_skill). \
+        offset(skip).limit(limit).all()
