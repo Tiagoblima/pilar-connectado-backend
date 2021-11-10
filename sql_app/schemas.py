@@ -52,6 +52,13 @@ class SchemeSkillPilarMember(BaseModel):
     description: str
 
 
+class SchemeMatch(BaseModel):
+    id: Optional[int]
+    id_pilarmember: int  # foreign key
+    id_opportunity: int  # foreign key
+    approved: bool
+
+
 class SchemeSkill(BaseModel):
     id: Optional[int]
     name: str

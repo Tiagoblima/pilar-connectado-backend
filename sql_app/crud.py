@@ -83,12 +83,13 @@ def get_member(db, id_user):
 
 
 def get_pilar_member_by_skill(db, id_skill, skip, limit):
-    skill_pilar_member = db.query(models.SkillPilarMember).filter(models.SkillPilarMember.id_skill == id_skill).offset(skip).limit(limit).all()
+    skill_pilar_member = db.query(models.SkillPilarMember).filter(models.SkillPilarMember.id_skill == id_skill).offset(
+        skip).limit(limit).all()
 
     users_list = []
     for skill_pilar in skill_pilar_member:
-
-        pilar_member = db.query(models.PilarMember).filter(models.PilarMember.id == skill_pilar.id_pilarmember).first().__dict__
+        pilar_member = db.query(models.PilarMember).filter(
+            models.PilarMember.id == skill_pilar.id_pilarmember).first().__dict__
         user = db.query(models.Users).filter(models.Users.id == pilar_member["id_user"]).first().__dict__
         user.update(pilar_member)
         user.update(skill_pilar.__dict__)
@@ -232,3 +233,11 @@ def get_opportunity_by_id(db, op_id):
 def get_opportunity_by_porto_member_id(db, id_porto_member, skip, limit):
     return db.query(models.Opportunity).filter(models.Opportunity.id_portomember == id_porto_member). \
         offset(skip).limit(limit).all()
+
+
+def create_match(db, match: schemas.SchemeMatch):
+    db_match = models.Match(**match.dict())
+    db.add(db_match)
+    db.commit()
+    db.refresh(db_match)
+    return db_match

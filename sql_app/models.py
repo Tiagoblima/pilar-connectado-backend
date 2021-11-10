@@ -46,7 +46,7 @@ class PilarMember(Base):
     id_user = Column(Integer, ForeignKey("Users.id"))
     introduction = Column(String)
     instagram = Column(String)
-    evaluation = Column(Float)
+    evaluation = Column(Float, default=0)
 
     class Config:
         orm_mode = True
@@ -92,6 +92,18 @@ class SkillPilarMember(Base):
     id_skill = Column(Integer, ForeignKey("Skill.id"), index=True)  # foreign key
     xp = Column(Integer, index=True)
     description = Column(String)
+
+    class Config:
+        orm_mode = True
+
+
+class Match(Base):
+    __tablename__ = "Match"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id_pilarmember = Column(Integer, ForeignKey("PilarMember.id"), index=True)  # foreign key
+    id_opportunity = Column(Integer, ForeignKey("Opportunity.id"), index=True)  # foreign key
+    approved = Column(Boolean, index=True, default=False)
 
     class Config:
         orm_mode = True

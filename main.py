@@ -247,3 +247,12 @@ def get_opportunity_by_porto_member_id(porto_member_id: int, skip: int = 0, limi
                                  db_opportunity]
 
     return returned_opportunity_list
+
+
+# Match REST
+
+@app.post("/v1/match/", response_model=schemas.SchemeMatch, tags=["Match"])
+def create_match(match: schemas.SchemeMatch = Body(...), db: Session = Depends(get_db)):
+    match = crud.create_match(db=db, match=match)
+    return {"id": match.id, "id_opportunity": match.id_opportunity, "id_pilarmember": match.id_pilarmember,
+            "approved": match.approved}
