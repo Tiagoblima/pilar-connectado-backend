@@ -275,3 +275,15 @@ def get_match(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     match_list = crud.get_match(db=db, skip=skip, limit=limit)
     return [{"id": match.id, "id_opportunity": match.id_opportunity, "id_pilarmember": match.id_pilarmember,
              "approved": match.approved} for match in match_list]
+
+
+@app.post("/v1/match/evaluation/", response_model=schemas.SchemeMatchEvaluation, tags=["Match"])
+def create_match(evaluation: schemas.SchemeMatchEvaluation = Body(...), db: Session = Depends(get_db)):
+    match = crud.create_match_evaluation(db=db, evaluation=evaluation)
+    return match.__dict__
+
+
+@app.get("/v1/match/evaluation/", response_model=List[schemas.SchemeMatchEvaluation], tags=["Match"])
+def get_match(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    evaluation_list = crud.get_match_evaluation(db=db, skip=skip, limit=limit)
+    return [match.__dict__ for match in evaluation_list]

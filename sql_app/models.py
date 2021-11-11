@@ -109,6 +109,19 @@ class Match(Base):
         orm_mode = True
 
 
+class MatchEvaluation(Base):
+    __tablename__ = "MatchEvaluation"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id_match = Column(Integer, ForeignKey("Match.id"), index=True)  # foreign key
+    id_user = Column(Integer, ForeignKey("Users.id"), index=True)  # foreign key
+    comment = Column(String, index=True, default=False)
+    stars = Column(Float, index=True)
+
+    class Config:
+        orm_mode = True
+
+
 class Opportunity(Base):
     __tablename__ = "Opportunity"
 

@@ -250,3 +250,15 @@ def get_match(db, skip, limit):
 def get_opportunity_by_id_skill(db, id_skill, skip, limit):
     return db.query(models.Opportunity).filter(models.Opportunity.id_skill == id_skill). \
         offset(skip).limit(limit).all()
+
+
+def create_match_evaluation(db, evaluation: schemas.SchemeMatchEvaluation):
+    db_evaluation = models.MatchEvaluation(**evaluation.dict())
+    db.add(db_evaluation)
+    db.commit()
+    db.refresh(db_evaluation)
+    return db_evaluation
+
+
+def get_match_evaluation(db, skip, limit):
+    return db.query(models.MatchEvaluation).offset(skip).limit(limit).all()

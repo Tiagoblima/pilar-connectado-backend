@@ -59,6 +59,14 @@ class SchemeMatch(BaseModel):
     approved: bool
 
 
+class SchemeMatchEvaluation(BaseModel):
+    id: Optional[int]
+    id_match: int  # foreign key
+    comment: str  # foreign key
+    id_user: int
+    stars: float
+
+
 class SchemeSkill(BaseModel):
     id: Optional[int]
     name: str
