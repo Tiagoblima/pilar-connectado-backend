@@ -156,6 +156,14 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return returned_post
 
 
+@app.get("/v1/posts/{id_user}/", response_model=List[schemas.SchemePilarMemberPost], tags=["Post"])
+def read_posts_by_user_id(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_post = crud.get_posts_by_id_user(db, user_id, skip=skip, limit=limit)
+    returned_post = [{"id": post.id, "user_id": post.user_id, "description": post.description,
+                      "rate": post.rate} for post in db_post]
+    return returned_post
+
+
 # --------------------------------------------------
 
 # REST SKILL -------------------------------

@@ -262,3 +262,8 @@ def create_match_evaluation(db, evaluation: schemas.SchemeMatchEvaluation):
 
 def get_match_evaluation(db, skip, limit):
     return db.query(models.MatchEvaluation).offset(skip).limit(limit).all()
+
+
+def get_posts_by_id_user(db, id_user, skip, limit):
+    return db.query(models.PilarMemberPost).filter(models.PilarMemberPost.user_id == id_user). \
+        offset(skip).limit(limit).all()
