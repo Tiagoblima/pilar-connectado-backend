@@ -116,6 +116,14 @@ def create_user(db: Session, user: schemas.SchemeUsers):
     return db_user
 
 
+def update_user(db, user: schemas.SchemeUsers):
+    old_user = get_user(db, user_id=user.id)
+    if old_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    updated_user = models.Users(**user.dict())
+    old_user.update(updated_user)
+
+
 def create_pilar_member(db: Session, pilar_mbm: schemas.SchemePilarMember):
     db_pilar_mbm = models.PilarMember(introduction=pilar_mbm.introduction,
                                       instagram=pilar_mbm.instagram,
