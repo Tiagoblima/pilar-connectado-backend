@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # Cors
 origins = [
 
-    "*",
+    "http://127.0.0.1:5500",
 ]
 # https://pilar-connectado.herokuapp.com/v1/
 app = FastAPI(title="Pilar Connectado")
@@ -69,9 +69,9 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 
 @app.put("/v1/users/{user_id}", tags=["Usuarios"])
 def update_users(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get_db)):
-
     user = crud.update_user(db=db, user=user)
     return {"id": user.id, "email": user.email, "password": user.password, "name": user.name}
+
 
 @app.get("/v1/users/{user_id}/", response_model=schemas.SchemeUsers, tags=["Usuarios"])
 def read_user(user_id: int, db: Session = Depends(get_db)):
