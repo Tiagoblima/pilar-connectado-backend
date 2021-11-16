@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import Depends, HTTPException
 from fastapi import FastAPI, Body
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from sql_app.crud import get_current_username
@@ -72,14 +73,14 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return {"id": db_user.id, "email": db_user.email, "password": db_user.password,
-            "cpf": db_user.cpf, "address": db_user.address, "name": db_user.name}
+    return jsonable_encoder(db_user)
 
 
-@app.put("/v1/users/{user_id}/", response_model=schemas.SchemeUsers, tags=["Usuarios"])
-def read_user(user: schemas.SchemeUsers, db: Session = Depends(get_db)):
-    new_user = crud.update_user(db, user=user)
-    return new_user.dict()
+@app.put("/v1/users/{user_id}/", tags=["Usuarios"])
+def update_user(user: schemas.SchemeUsers, db: Session = Depends(get_db)):
+    response = crud.update_user(db, user=user)
+
+    return response
 
 
 @app.get("/users/me", tags=["Usuarios"])
