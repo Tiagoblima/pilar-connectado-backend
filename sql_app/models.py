@@ -102,7 +102,7 @@ class Match(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_pilarmember = Column(Integer, ForeignKey("PilarMember.id"), index=True)  # foreign key
-    id_opportunity = Column(Integer, ForeignKey("Opportunity.id"), index=True)  # foreign key
+    id_opportunity = Column(Integer, ForeignKey("Opportunity.id", ondelete='CASCADE'), index=True)  # foreign key
     approved = Column(Boolean, index=True, default=False)
 
     class Config:
