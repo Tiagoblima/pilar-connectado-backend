@@ -244,6 +244,30 @@ def get_opportunity_by_id(db, op_id):
     return db.query(models.Opportunity).filter(models.Opportunity.id == op_id).first()
 
 
+def update_opportunity(db, opportunity: schemas.SchemeOpportunity):
+    old_opportunity = get_opportunity_by_id(db, op_id=opportunity.id)
+
+    if old_opportunity is None:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+
+    opportunity_dict = opportunity.dict()
+    opportunity_dict["id"] = old_opportunity.id
+
+    success = db.query(models.Opportunity).filter(models.Opportunity.id == old_opportunity.id).update(opportunity_dict)
+    db.commit()
+    return {"success": bool(success), "msg": ""}
+
+
+def delete_opportunity(db, opportunity: schemas.SchemeOpportunity):
+    opportunity_to_delete = get_opportunity_by_id(db, op_id=opportunity.id)
+    if opportunity_to_delete is None:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+
+    success = db.query(models.Opportunity).filter(models.Opportunity.id == opportunity_to_delete.id).delete()
+    db.commit()
+    return {"success": bool(success), "msg": ""}
+
+
 def get_opportunity_by_porto_member_id(db, id_porto_member, skip, limit):
     return db.query(models.Opportunity).filter(models.Opportunity.id_portomember == id_porto_member). \
         offset(skip).limit(limit).all()

@@ -67,6 +67,12 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return users2
 
 
+@app.put("/v1/users/{user_id}", tags=["Usuarios"])
+def update_users(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get_db)):
+
+    user = crud.update_user(db=db, user=user)
+    return {"id": user.id, "email": user.email, "password": user.password, "name": user.name}
+
 @app.get("/v1/users/{user_id}/", response_model=schemas.SchemeUsers, tags=["Usuarios"])
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
@@ -246,6 +252,20 @@ def get_opportunity_by_id(op_id: int, db: Session = Depends(get_db)):
             "endDate": opportunity.endDate, "isactive": opportunity.isactive,
             "description": opportunity.description,
             "id_skill": opportunity.id_skill, "value": opportunity.value}
+
+
+@app.put("/v1/opportunity/{op_id}/", tags=["Opportunity"])
+def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Depends(get_db)):
+    response = crud.update_opportunity(db, opportunity=opportunity)
+
+    return response
+
+
+@app.delete("/v1/opportunity/{op_id}/", tags=["Opportunity"])
+def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Depends(get_db)):
+    response = crud.delete_opportunity(db, opportunity=opportunity)
+
+    return response, "Opportunity id: " + opportunity.id.__str__()
 
 
 @app.get("/v1/opportunity/by/porto_member_id/{porto_member_id}/", response_model=List[schemas.SchemeOpportunity],
