@@ -58,6 +58,18 @@ metadata = sqlalchemy.MetaData()
 
 security = HTTPBasic()
 
+# region Users
+
+
+def create_user(db: Session, user: schemas.SchemeUsers):
+    db_user = models.Users(name=user.name, address=user.address,
+                           cpf=user.cpf, email=user.email,
+                           password=get_password_hash(user.password))
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
 
 def get_user(db: Session, user_id: int):
     return db.query(models.Users).filter(models.Users.id == user_id).first()
@@ -71,6 +83,49 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Users).offset(skip).limit(limit).all()
 
 
+def update_user(db, user: schemas.SchemeUsers):
+    old_user = get_user(db, user_id=user.id)
+
+    if old_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user_dict = user.dict()
+    user_dict["id"] = old_user.id
+
+    success = db.query(models.Users).filter(models.Users.id == old_user.id).update(user_dict)
+    db.commit()
+    return {"success": bool(success), "msg": ""}
+
+
+def delete_user(db, user: schemas.SchemeUsers):
+    user_to_delete = get_user(db, user_id=user.id)
+    if user_to_delete is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    success = db.query(models.Users).filter(models.Users.id == user_to_delete.id).delete()
+    db.commit()
+    if success:
+        return {"success": bool(success), "msg": "User " + user.name + " deleted!"}
+    else:
+        return {"fail": bool(success), "msg": "User +" + user.name + " was not deleted!"}
+
+
+# endregion
+
+
+# region Pilar Member
+
+
+def create_pilar_member(db: Session, pilar_mbm: schemas.SchemePilarMember):
+    db_pilar_mbm = models.PilarMember(introduction=pilar_mbm.introduction,
+                                      instagram=pilar_mbm.instagram,
+                                      id_user=pilar_mbm.id_user, evaluation=pilar_mbm.evaluation)
+    db.add(db_pilar_mbm)
+    db.commit()
+    db.refresh(db_pilar_mbm)
+    return db_pilar_mbm
+
+
 def get_pilar_member(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.PilarMember).offset(skip).limit(limit).all()
 
@@ -80,6 +135,10 @@ def get_member(db, id_user):
     if not response:
         response = db.query(models.PortoMember).filter(models.PortoMember.id_user == id_user).first()
     return response
+
+
+def get_pilar_member_by_id(db: Session, pilar_member_id: int):
+    return db.query(models.PilarMember).filter(models.PilarMember.id == pilar_member_id).first()
 
 
 def get_pilar_member_by_skill(db, id_skill, skip, limit):
@@ -102,95 +161,22 @@ def get_pilar_member_by_skill(db, id_skill, skip, limit):
     return users_list
 
 
-def get_password_hash(password):
-    return pwd_context.hash(password)
-
-
-def create_user(db: Session, user: schemas.SchemeUsers):
-    db_user = models.Users(name=user.name, address=user.address,
-                           cpf=user.cpf, email=user.email,
-                           password=get_password_hash(user.password))
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
-
-
-def update_user(db, user: schemas.SchemeUsers):
-    old_user = get_user(db, user_id=user.id)
-
-    if old_user is None:
+def delete_pilar_member(db, pilar_member: schemas.SchemePilarMember):
+    pilar_member_to_delete = get_pilar_member_by_id(db, pilar_member_id=pilar_member.id)
+    if pilar_member_to_delete is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    user_dict = user.dict()
-    user_dict["id"] = old_user.id
-
-    success = db.query(models.Users).filter(models.Users.id == old_user.id).update(user_dict)
+    success = db.query(models.PilarMember).filter(models.PilarMember.id == pilar_member_to_delete.id).delete()
     db.commit()
-    return {"success": bool(success), "msg": ""}
+    if success:
+        return {"success": bool(success), "msg": "User " + pilar_member_to_delete.name + " deleted!"}
+    else:
+        return {"fail": bool(success), "msg": "User +" + pilar_member_to_delete.name + " was not deleted!"}
+
+# endregion
 
 
-def create_pilar_member(db: Session, pilar_mbm: schemas.SchemePilarMember):
-    db_pilar_mbm = models.PilarMember(introduction=pilar_mbm.introduction,
-                                      instagram=pilar_mbm.instagram,
-                                      id_user=pilar_mbm.id_user, evaluation=pilar_mbm.evaluation)
-    db.add(db_pilar_mbm)
-    db.commit()
-    db.refresh(db_pilar_mbm)
-    return db_pilar_mbm
-
-
-def get_items(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Phone).offset(skip).limit(limit).all()
-
-
-def get_posts(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.PilarMemberPost).offset(skip).limit(limit).all()
-
-
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-
-def authenticate_user(db, username: str, password: str):
-    db_user = get_user_by_email(db, email=username)
-
-    if not db_user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email não registrado.",
-                            headers={"WWW-Authenticate": "Basic"})
-
-    if not verify_password(password, db_user.password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Senha inválida",
-                            headers={"WWW-Authenticate": "Basic"})
-
-    return db_user
-
-
-def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
-    db = SessionLocal()
-
-    return authenticate_user(db, username=credentials.username, password=credentials.password)
-
-
-def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
-    db_item = models.PilarMemberPost(
-        user_id=post.user_id,
-        description=post.description,
-        rate=post.rate
-    )
-    db.add(db_item)
-    db.commit()
-    db.refresh(db_item)
-    return db_item
-
-
-def create_post(db: Session, post: schemas.SchemePilarMemberPost):
-    db_post = models.PilarMemberPost(user_id=post.user_id, description=post.description, rate=post.rate)
-    db.add(db_post)
-    db.commit()
-    db.refresh(db_post)
-    return db_post
-
+# region Porto Member
 
 def create_porto_member(db, porto_mbm):
     db_porto_mbm = models.PortoMember(id_user=porto_mbm.id_user, workaddress=porto_mbm.workaddress)
@@ -202,7 +188,31 @@ def create_porto_member(db, porto_mbm):
 
 def get_porto_member(db, skip, limit):
     return db.query(models.PortoMember).offset(skip).limit(limit).all()
+# endregion
 
+
+# region Post
+
+
+def create_post(db: Session, post: schemas.SchemePilarMemberPost):
+    db_post = models.PilarMemberPost(user_id=post.user_id, description=post.description, rate=post.rate)
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post
+
+
+def get_posts(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.PilarMemberPost).offset(skip).limit(limit).all()
+
+
+def get_posts_by_id_user(db, id_user, skip, limit):
+    return db.query(models.PilarMemberPost).filter(models.PilarMemberPost.user_id == id_user). \
+        offset(skip).limit(limit).all()
+# endregion
+
+
+# region Skill
 
 def create_skill(db, skill):
     db_skill = models.Skill(**skill.dict())
@@ -226,7 +236,10 @@ def create_skill_pilar_member(db, skill_pilar_member):
 
 def get_skill_pilar_member(db, skip, limit):
     return db.query(models.SkillPilarMember).offset(skip).limit(limit).all()
+# endregion
 
+
+# region Opportunity
 
 def create_opportunity(db: Session, opportunity: schemas.SchemeOpportunity):
     db_opportunity = models.Opportunity(**opportunity.dict())
@@ -242,6 +255,16 @@ def get_opportunity(db, skip, limit):
 
 def get_opportunity_by_id(db, op_id):
     return db.query(models.Opportunity).filter(models.Opportunity.id == op_id).first()
+
+
+def get_opportunity_by_id_skill(db, id_skill, skip, limit):
+    return db.query(models.Opportunity).filter(models.Opportunity.id_skill == id_skill). \
+        offset(skip).limit(limit).all()
+
+
+def get_opportunity_by_porto_member_id(db, id_porto_member, skip, limit):
+    return db.query(models.Opportunity).filter(models.Opportunity.id_portomember == id_porto_member). \
+        offset(skip).limit(limit).all()
 
 
 def update_opportunity(db, opportunity: schemas.SchemeOpportunity):
@@ -266,11 +289,10 @@ def delete_opportunity(db, opportunity: schemas.SchemeOpportunity):
     success = db.query(models.Opportunity).filter(models.Opportunity.id == opportunity_to_delete.id).delete()
     db.commit()
     return {"success": bool(success), "msg": ""}
+# endregion
 
 
-def get_opportunity_by_porto_member_id(db, id_porto_member, skip, limit):
-    return db.query(models.Opportunity).filter(models.Opportunity.id_portomember == id_porto_member). \
-        offset(skip).limit(limit).all()
+# region Match
 
 
 def create_match(db, match: schemas.SchemeMatch):
@@ -285,11 +307,6 @@ def get_match(db, skip, limit):
     return db.query(models.Match).offset(skip).limit(limit).all()
 
 
-def get_opportunity_by_id_skill(db, id_skill, skip, limit):
-    return db.query(models.Opportunity).filter(models.Opportunity.id_skill == id_skill). \
-        offset(skip).limit(limit).all()
-
-
 def create_match_evaluation(db, evaluation: schemas.SchemeMatchEvaluation):
     db_evaluation = models.MatchEvaluation(**evaluation.dict())
     db.add(db_evaluation)
@@ -300,8 +317,40 @@ def create_match_evaluation(db, evaluation: schemas.SchemeMatchEvaluation):
 
 def get_match_evaluation(db, skip, limit):
     return db.query(models.MatchEvaluation).offset(skip).limit(limit).all()
+# endregion
 
 
-def get_posts_by_id_user(db, id_user, skip, limit):
-    return db.query(models.PilarMemberPost).filter(models.PilarMemberPost.user_id == id_user). \
-        offset(skip).limit(limit).all()
+# region Login
+
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def authenticate_user(db, username: str, password: str):
+    db_user = get_user_by_email(db, email=username)
+
+    if not db_user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email não registrado.",
+                            headers={"WWW-Authenticate": "Basic"})
+
+    if not verify_password(password, db_user.password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Senha inválida",
+                            headers={"WWW-Authenticate": "Basic"})
+
+    return db_user
+
+
+def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+    db = SessionLocal()
+
+    return authenticate_user(db, username=credentials.username, password=credentials.password)
+# endregion
+
+
+def get_items(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Phone).offset(skip).limit(limit).all()

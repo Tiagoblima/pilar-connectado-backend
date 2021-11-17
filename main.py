@@ -89,6 +89,12 @@ def update_user(user: schemas.SchemeUsers, db: Session = Depends(get_db)):
     return response
 
 
+@app.delete("/v1/users/{user_id}/", tags=["Usuarios"])
+def delete_user(user: schemas.SchemeUsers, db: Session = Depends(get_db)):
+    response = crud.delete_user(db, user=user)
+
+    return response
+
 @app.get("/v1/users/me", tags=["Usuarios"])
 def read_current_user(username: str = Depends(get_current_username)):
     return {"username": username}
@@ -265,7 +271,7 @@ def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Dep
 def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Depends(get_db)):
     response = crud.delete_opportunity(db, opportunity=opportunity)
 
-    return response, "Opportunity id: " + opportunity.id.__str__()
+    return response, "Opportunity id: " + opportunity.id.__str__() + "was deleted"
 
 
 @app.get("/v1/opportunity/by/porto_member_id/{porto_member_id}/", response_model=List[schemas.SchemeOpportunity],

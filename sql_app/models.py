@@ -43,7 +43,7 @@ class PilarMember(Base):
     __tablename__ = "PilarMember"
     # Column(Integer, ForeignKey("User.id"), primary_key=True, index=True)
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    id_user = Column(Integer, ForeignKey("Users.id"))
+    id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'))
     introduction = Column(String)
     instagram = Column(String)
     evaluation = Column(Float, default=0)
@@ -56,7 +56,7 @@ class PortoMember(Base):
     __tablename__ = "PortoMember"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    id_user = Column(Integer, ForeignKey("Users.id"), index=True)
+    id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'), index=True)
     workaddress = Column(String)
 
     class Config:
@@ -69,7 +69,7 @@ class PilarMemberPost(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     description = Column(String)
     rate = Column(Integer)
-    user_id = Column(Integer, ForeignKey("Users.id"))
+    user_id = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'))
 
     class Config:
         orm_mode = True
@@ -101,7 +101,7 @@ class Match(Base):
     __tablename__ = "Match"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    id_pilarmember = Column(Integer, ForeignKey("PilarMember.id"), index=True)  # foreign key
+    id_pilarmember = Column(Integer, ForeignKey("PilarMember.id", ondelete='CASCADE'), index=True)  # foreign key
     id_opportunity = Column(Integer, ForeignKey("Opportunity.id", ondelete='CASCADE'), index=True)  # foreign key
     approved = Column(Boolean, index=True, default=False)
 
@@ -113,8 +113,8 @@ class MatchEvaluation(Base):
     __tablename__ = "MatchEvaluation"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    id_match = Column(Integer, ForeignKey("Match.id"), index=True)  # foreign key
-    id_user = Column(Integer, ForeignKey("Users.id"), index=True)  # foreign key
+    id_match = Column(Integer, ForeignKey("Match.id", ondelete='CASCADE'), index=True)  # foreign key
+    id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'), index=True)  # foreign key
     comment = Column(String, index=True, default=False)
     stars = Column(Float, index=True)
 
@@ -126,7 +126,7 @@ class Opportunity(Base):
     __tablename__ = "Opportunity"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    id_portomember = Column(Integer, ForeignKey("PortoMember.id"), index=True)  # foreign key
+    id_portomember = Column(Integer, ForeignKey("PortoMember.id", ondelete='CASCADE'), index=True)  # foreign key
     startDate = Column(String)
     endDate = Column(String)
     isactive = Column(Boolean)
