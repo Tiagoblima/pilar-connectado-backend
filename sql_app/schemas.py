@@ -27,7 +27,7 @@ class SchemePilarMember(BaseModel):
     id: Optional[int]
     id_user: int  # foreign key
     introduction: str
-    evaluation: float
+    evaluation: Optional[float]
     instagram: str
 
 
