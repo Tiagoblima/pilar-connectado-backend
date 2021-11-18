@@ -95,6 +95,7 @@ def delete_user(user: schemas.SchemeUsers, db: Session = Depends(get_db)):
 
     return response
 
+
 @app.get("/v1/users/me", tags=["Usuarios"])
 def read_current_user(username: str = Depends(get_current_username)):
     return {"username": username}
@@ -110,6 +111,39 @@ def read_pilar_member(id_user: int, db: Session = Depends(get_db)):
 
 
 # ---------------------------------------------------------------------
+
+# REST Mobile Phone
+
+@app.post("/v1/users/", tags=["Usuarios"])
+def create_user(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+    user = crud.create_user(db=db, user=user)
+    return {"id": user.id, "email": user.email, "password": user.password, "name": user.name}
+
+
+@app.get("/v1/phone/", response_model=List[schemas.SchemePhone], tags=["Phone"])
+def read_phones(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    phones = crud.get_phones(db, skip=skip, limit=limit)
+
+    return jsonable_encoder(phones)
+
+
+@app.get("/v1/phone/by/user/{id_user}/", response_model=List[schemas.SchemePhone], tags=["Phone"])
+def read_phones(id_user: int, db: Session = Depends(get_db)):
+    phones = crud.get_phones_by_id_user(db, id_user=id_user)
+
+    return jsonable_encoder(phones)
+
+
+@app.post("/v1/phone/", tags=["Phone"])
+def create_user(phone: schemas.SchemePhone = Body(...), db: Session = Depends(get_db)):
+    phone = crud.create_phone(db=db, phone=phone)
+    return jsonable_encoder(phone)
+
 
 # -----------------------REST Pilar Member ----------------------------------------
 

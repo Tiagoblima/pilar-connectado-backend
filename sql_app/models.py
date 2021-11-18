@@ -29,7 +29,7 @@ class Phone(Base):
     __tablename__ = "Phone"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    number = Column(Integer)
+    number = Column(String)
     type = Column(String, index=True)
     id_user = Column(Integer, ForeignKey("Users.id"))
 

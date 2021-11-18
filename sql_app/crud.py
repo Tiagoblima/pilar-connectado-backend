@@ -366,8 +366,17 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
 # endregion
 
 
-def get_items(db: Session, skip: int = 0, limit: int = 100):
+def get_phones(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Phone).offset(skip).limit(limit).all()
 
 
+def create_phone(db, phone: schemas.SchemePhone):
+    db_phone = models.Phone(**phone.dict())
+    db.add(db_phone)
+    db.commit()
+    db.refresh(db_phone)
+    return db_phone
 
+
+def get_phones_by_id_user(db, id_user):
+    return db.query(models.Phone).filter(models.Phone.id_user == id_user).all()
