@@ -43,7 +43,7 @@ class PilarMember(Base):
     __tablename__ = "PilarMember"
     # Column(Integer, ForeignKey("User.id"), primary_key=True, index=True)
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'))
+    id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'), unique=True)
     introduction = Column(String)
     instagram = Column(String)
     evaluation = Column(Float, default=0)
