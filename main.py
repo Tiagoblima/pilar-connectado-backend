@@ -67,10 +67,10 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return users2
 
 
-@app.put("/v1/users/{user_id}", tags=["Usuarios"])
-def update_users(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get_db)):
-    user = crud.update_user(db=db, user=user)
-    return {"id": user.id, "email": user.email, "password": user.password, "name": user.name}
+# @app.put("/v1/users/{user_id}", tags=["Usuarios"])
+# def update_users(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get_db)):
+#     user = crud.update_user(db=db, user=user)
+#     return {"id": user.id, "email": user.email, "password": user.password, "name": user.name}
 
 
 @app.get("/v1/users/{user_id}/", response_model=schemas.SchemeUsers, tags=["Usuarios"])
