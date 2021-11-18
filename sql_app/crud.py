@@ -58,6 +58,7 @@ metadata = sqlalchemy.MetaData()
 
 security = HTTPBasic()
 
+
 # region Users
 
 
@@ -173,6 +174,7 @@ def delete_pilar_member(db, pilar_member: schemas.SchemePilarMember):
     else:
         return {"fail": bool(success), "msg": "User +" + pilar_member_to_delete.name + " was not deleted!"}
 
+
 # endregion
 
 
@@ -188,13 +190,15 @@ def create_porto_member(db, porto_mbm):
 
 def get_porto_member(db, skip, limit):
     return db.query(models.PortoMember).offset(skip).limit(limit).all()
+
+
 # endregion
 
 
 # region Post
 
 
-def create_post(db: Session, post: schemas.SchemePilarMemberPost):
+def create_pilar_member_post(db: Session, post: schemas.SchemePilarMemberPost):
     db_post = models.PilarMemberPost(user_id=post.user_id, description=post.description, rate=post.rate)
     db.add(db_post)
     db.commit()
@@ -209,6 +213,8 @@ def get_posts(db: Session, skip: int = 0, limit: int = 100):
 def get_posts_by_id_user(db, id_user, skip, limit):
     return db.query(models.PilarMemberPost).filter(models.PilarMemberPost.user_id == id_user). \
         offset(skip).limit(limit).all()
+
+
 # endregion
 
 
@@ -236,6 +242,8 @@ def create_skill_pilar_member(db, skill_pilar_member):
 
 def get_skill_pilar_member(db, skip, limit):
     return db.query(models.SkillPilarMember).offset(skip).limit(limit).all()
+
+
 # endregion
 
 
@@ -289,6 +297,8 @@ def delete_opportunity(db, opportunity: schemas.SchemeOpportunity):
     success = db.query(models.Opportunity).filter(models.Opportunity.id == opportunity_to_delete.id).delete()
     db.commit()
     return {"success": bool(success), "msg": ""}
+
+
 # endregion
 
 
@@ -317,6 +327,8 @@ def create_match_evaluation(db, evaluation: schemas.SchemeMatchEvaluation):
 
 def get_match_evaluation(db, skip, limit):
     return db.query(models.MatchEvaluation).offset(skip).limit(limit).all()
+
+
 # endregion
 
 
@@ -349,8 +361,13 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     db = SessionLocal()
 
     return authenticate_user(db, username=credentials.username, password=credentials.password)
+
+
 # endregion
 
 
 def get_items(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Phone).offset(skip).limit(limit).all()
+
+
+
