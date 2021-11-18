@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # Cors
 origins = [
 
-    "http://127.0.0.1:5500",
+    "*",
 ]
 # https://pilar-connectado.herokuapp.com/v1/
 app = FastAPI(title="Pilar Connectado")
