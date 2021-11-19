@@ -192,8 +192,8 @@ def read_porto_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
 
 @app.get("/v1/porto_member/by/id/{op_id}/", response_model=schemas.SchemePortoMember, tags=["Porto Member"])
 def get_porto_member_by_id(op_id: int, db: Session = Depends(get_db)):
-    porto_member = crud.get_porto_member(db, op_id=op_id)
-    return {"id": porto_member.id, "workaddress": porto_member.workaddress, "id_user": porto_member.id_user}
+    porto_mbm = crud.get_porto_member_by_id(db, op_id=op_id)
+    return {"id": porto_mbm.id, "workaddress": porto_mbm.workaddress, "id_user": porto_mbm.id_user}
 
 # ------------------------------------------------------------------------------
 
