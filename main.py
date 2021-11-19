@@ -237,6 +237,10 @@ def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     returned_skill_list = [{"id": skill.id, "name": skill.name} for skill in db_skill]
     return returned_skill_list
 
+@app.get("/v1/skill/by/id/{op_id}/", response_model=schemas.SchemeSkill, tags=["Skill"])
+def get_skill_by_id(op_id: int, db: Session = Depends(get_db)):
+    skill = crud.get_skill_by_id(db, op_id=op_id)
+    return {"id": skill.id, "name": skill.name}
 
 # -------------------------------------------------------
 

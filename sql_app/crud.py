@@ -234,6 +234,8 @@ def create_skill(db, skill):
 def get_skill(db, skip, limit):
     return db.query(models.Skill).offset(skip).limit(limit).all()
 
+def get_skill_by_id(db, op_id):
+    return db.query(models.Skill).filter(models.Skill.id == op_id).first()
 
 def create_skill_pilar_member(db, skill_pilar_member):
     db_skill = models.SkillPilarMember(**skill_pilar_member.dict())
