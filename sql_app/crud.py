@@ -191,7 +191,7 @@ def create_porto_member(db, porto_mbm):
 def get_porto_member(db, skip, limit):
     return db.query(models.PortoMember).offset(skip).limit(limit).all()
 
-def get_porto_member_by_id(db: Session, porto_member_id: int):
+def get_porto_member_by_id(porto_member_id: int, db: Session):
     return db.query(models.PortoMember).filter(models.PortoMember.id == porto_member_id).first()
 
 
