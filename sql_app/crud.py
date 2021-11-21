@@ -162,6 +162,20 @@ def get_pilar_member_by_skill(db, id_skill, skip, limit):
     return users_list
 
 
+def update_pilar_member(db, user: schemas.SchemePilarMember):
+    old_user = get_member(db, id_user=user.id)
+
+    if old_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user_dict = user.dict()
+    user_dict["id"] = old_user.id
+
+    success = db.query(models.PilarMember).filter(models.PilarMember.id == old_user.id).update(user_dict)
+    db.commit()
+    return {"success": bool(success), "msg": ""}
+
+
 def delete_pilar_member(db, pilar_member: schemas.SchemePilarMember):
     pilar_member_to_delete = get_pilar_member_by_id(db, pilar_member_id=pilar_member.id)
     if pilar_member_to_delete is None:

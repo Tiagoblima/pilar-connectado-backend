@@ -44,7 +44,7 @@ def get_db():
         db.close()
 
 
-# ----------------- REST USER ----------------
+# region REST USER
 
 
 @app.post("/v1/users/", tags=["Usuarios"])
@@ -109,10 +109,10 @@ def read_pilar_member(id_user: int, db: Session = Depends(get_db)):
 
     return member_json
 
+# endregion
 
-# ---------------------------------------------------------------------
 
-# REST Mobile Phone
+#  region REST Mobile Phone
 
 @app.post("/v1/users/", tags=["Usuarios"])
 def create_user(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get_db)):
@@ -123,6 +123,12 @@ def create_user(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get
 
     user = crud.create_user(db=db, user=user)
     return {"id": user.id, "email": user.email, "password": user.password, "name": user.name}
+
+
+@app.post("/v1/phone/", tags=["Phone"])
+def create_user(phone: schemas.SchemePhone = Body(...), db: Session = Depends(get_db)):
+    phone = crud.create_phone(db=db, phone=phone)
+    return jsonable_encoder(phone)
 
 
 @app.get("/v1/phone/", response_model=List[schemas.SchemePhone], tags=["Phone"])
@@ -139,13 +145,12 @@ def read_phones(id_user: int, db: Session = Depends(get_db)):
     return jsonable_encoder(phones)
 
 
-@app.post("/v1/phone/", tags=["Phone"])
-def create_user(phone: schemas.SchemePhone = Body(...), db: Session = Depends(get_db)):
-    phone = crud.create_phone(db=db, phone=phone)
-    return jsonable_encoder(phone)
 
 
-# -----------------------REST Pilar Member ----------------------------------------
+# endregion
+
+
+#  region REST Pilar Member
 
 
 @app.post("/v1/pilar_member/", response_model=schemas.SchemePilarMember, tags=["Pilar Member"])
@@ -170,10 +175,11 @@ def read_pilar_member_by_skill(id_skill: int, skip: int = 0, limit: int = 100, d
 
     return users
 
+# endregion
 
-# --------------------------------------------------------------
 
-# REST Porto Member --------------------------------------------------
+# region REST Porto Member
+
 
 @app.post("/v1/porto_member/", response_model=schemas.SchemePortoMember, tags=["Porto Member"])
 def create_porto_member(porto_mbm: schemas.SchemePortoMember = Body(...), db: Session = Depends(get_db)):
@@ -195,10 +201,12 @@ def get_porto_member_by_id(op_id: int, db: Session = Depends(get_db)):
     porto_mbm = crud.get_porto_member_by_id(db, op_id=op_id)
     return {"id": porto_mbm.id, "workaddress": porto_mbm.workaddress, "id_user": porto_mbm.id_user}
 
-# ------------------------------------------------------------------------------
+# endregion
 
 
-# REST POSTER ----------------------------------
+# region REST POST
+
+
 @app.post("/v1/posts/", response_model=schemas.SchemePilarMemberPost, tags=["Post"])
 def create_post(post: schemas.SchemePilarMemberPost = Body(...), db: Session = Depends(get_db)):
     post = crud.create_pilar_member_post(db=db, post=post)
@@ -220,29 +228,16 @@ def read_posts_by_user_id(user_id: int, skip: int = 0, limit: int = 100, db: Ses
                       "rate": post.rate} for post in db_post]
     return returned_post
 
+# endregion
 
-# --------------------------------------------------
 
-# REST SKILL -------------------------------
+# region REST SKILL
+
 
 @app.post("/v1/skill/", response_model=schemas.SchemeSkill, tags=["Skill"])
 def create_skill(skill: schemas.SchemeSkill = Body(...), db: Session = Depends(get_db)):
     skill = crud.create_skill(db=db, skill=skill)
     return {"id": skill.id, "name": skill.name}
-
-
-@app.get("/v1/skill/", response_model=List[schemas.SchemeSkill], tags=["Skill"])
-def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    db_skill = crud.get_skill(db, skip=skip, limit=limit)
-    returned_skill_list = [{"id": skill.id, "name": skill.name} for skill in db_skill]
-    return returned_skill_list
-
-@app.get("/v1/skill/by/id/{op_id}/", response_model=schemas.SchemeSkill, tags=["Skill"])
-def get_skill_by_id(op_id: int, db: Session = Depends(get_db)):
-    skill = crud.get_skill_by_id(db, op_id=op_id)
-    return {"id": skill.id, "name": skill.name}
-
-# -------------------------------------------------------
 
 
 @app.post("/v1/skill_pilar_member/", response_model=schemas.SchemeSkillPilarMember, tags=["Skill Pilar Member"])
@@ -253,6 +248,19 @@ def create_skill(skill_pilar_member: schemas.SchemeSkillPilarMember = Body(...),
             "xp": skill_pilar_member.xp, "description": skill_pilar_member.description}
 
 
+@app.get("/v1/skill/", response_model=List[schemas.SchemeSkill], tags=["Skill"])
+def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_skill = crud.get_skill(db, skip=skip, limit=limit)
+    returned_skill_list = [{"id": skill.id, "name": skill.name} for skill in db_skill]
+    return returned_skill_list
+
+
+@app.get("/v1/skill/by/id/{op_id}/", response_model=schemas.SchemeSkill, tags=["Skill"])
+def get_skill_by_id(op_id: int, db: Session = Depends(get_db)):
+    skill = crud.get_skill_by_id(db, op_id=op_id)
+    return {"id": skill.id, "name": skill.name}
+
+
 @app.get("/v1/skill_pilar_member/", response_model=List[schemas.SchemeSkillPilarMember], tags=["Skill Pilar Member"])
 def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_skill = crud.get_skill_pilar_member(db, skip=skip, limit=limit)
@@ -261,10 +269,10 @@ def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
                             "description": skill_pilar_member.description} for skill_pilar_member in db_skill]
     return returned_skill_list
 
+# endregion
 
-# --------------------------------------------------
 
-# REST OPPORTUNITY -------------------------------
+# region REST OPPORTUNITY
 
 
 @app.post("/v1/opportunity/", response_model=schemas.SchemeOpportunity, tags=["Opportunity"])
@@ -302,20 +310,6 @@ def get_opportunity_by_id(op_id: int, db: Session = Depends(get_db)):
             "id_skill": opportunity.id_skill, "value": opportunity.value}
 
 
-@app.put("/v1/opportunity/{op_id}/", tags=["Opportunity"])
-def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Depends(get_db)):
-    response = crud.update_opportunity(db, opportunity=opportunity)
-
-    return response
-
-
-@app.delete("/v1/opportunity/{op_id}/", tags=["Opportunity"])
-def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Depends(get_db)):
-    response = crud.delete_opportunity(db, opportunity=opportunity)
-
-    return response, "Opportunity id: " + opportunity.id.__str__() + "was deleted"
-
-
 @app.get("/v1/opportunity/by/porto_member_id/{porto_member_id}/", response_model=List[schemas.SchemeOpportunity],
          tags=["Opportunity"])
 def get_opportunity_by_porto_member_id(porto_member_id: int, skip: int = 0, limit: int = 100,
@@ -344,13 +338,36 @@ def get_opportunity_by_id(id_skill: int, skip: int = 0, limit: int = 100, db: Se
     return returned_opportunity_list
 
 
-# Match REST
+@app.put("/v1/opportunity/{op_id}/", tags=["Opportunity"])
+def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Depends(get_db)):
+    response = crud.update_opportunity(db, opportunity=opportunity)
+
+    return response
+
+
+@app.delete("/v1/opportunity/{op_id}/", tags=["Opportunity"])
+def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Depends(get_db)):
+    response = crud.delete_opportunity(db, opportunity=opportunity)
+
+    return response, "Opportunity id: " + opportunity.id.__str__() + "was deleted"
+
+# endregion
+
+
+# region Match REST
+
 
 @app.post("/v1/match/", response_model=schemas.SchemeMatch, tags=["Match"])
 def create_match(match: schemas.SchemeMatch = Body(...), db: Session = Depends(get_db)):
     match = crud.create_match(db=db, match=match)
     return {"id": match.id, "id_opportunity": match.id_opportunity, "id_pilarmember": match.id_pilarmember,
             "approved": match.approved}
+
+
+@app.post("/v1/match/evaluation/", response_model=schemas.SchemeMatchEvaluation, tags=["Match"])
+def create_match(evaluation: schemas.SchemeMatchEvaluation = Body(...), db: Session = Depends(get_db)):
+    match = crud.create_match_evaluation(db=db, evaluation=evaluation)
+    return match.__dict__
 
 
 @app.get("/v1/match/", response_model=List[schemas.SchemeMatch], tags=["Match"])
@@ -360,13 +377,9 @@ def get_match(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
              "approved": match.approved} for match in match_list]
 
 
-@app.post("/v1/match/evaluation/", response_model=schemas.SchemeMatchEvaluation, tags=["Match"])
-def create_match(evaluation: schemas.SchemeMatchEvaluation = Body(...), db: Session = Depends(get_db)):
-    match = crud.create_match_evaluation(db=db, evaluation=evaluation)
-    return match.__dict__
-
-
 @app.get("/v1/match/evaluation/", response_model=List[schemas.SchemeMatchEvaluation], tags=["Match"])
 def get_match(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     evaluation_list = crud.get_match_evaluation(db=db, skip=skip, limit=limit)
     return [match.__dict__ for match in evaluation_list]
+
+# endregion
