@@ -58,7 +58,7 @@ class PortoMember(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'), index=True)
     workaddress = Column(String)
-
+    company_name = Column(String)
     class Config:
         orm_mode = True
 
