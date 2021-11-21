@@ -114,6 +114,55 @@ def delete_user(db, user: schemas.SchemeUsers):
 # endregion
 
 
+# region Phone
+
+
+def get_phones(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Phone).offset(skip).limit(limit).all()
+
+
+def create_phone(db, phone: schemas.SchemePhone):
+    db_phone = models.Phone(**phone.dict())
+    db.add(db_phone)
+    db.commit()
+    db.refresh(db_phone)
+    return db_phone
+
+
+def get_phones_by_id_user(db, id_user):
+    return db.query(models.Phone).filter(models.Phone.id_user == id_user).all()
+
+
+def update_phone(db, phone: schemas.SchemePhone):
+    old_phone = get_phones_by_id_user(db, id_user=phone.id_user)
+
+    if old_phone is None:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+
+    opportunity_dict = phone.dict()
+    opportunity_dict["id"] = old_phone.id
+
+    success = db.query(models.Opportunity).filter(models.Opportunity.id == old_phone.id).update(opportunity_dict)
+    db.commit()
+    if success:
+        return {"success": bool(success), "msg": "Phone updated"}
+    return {"success": bool(success), "msg": "Phone failed to be updated"}
+
+
+def delete_phone(db, phone: schemas.SchemePhone):
+    phone_to_delete = get_phones_by_id_user(db, id_user=phone.id_user)
+    if phone_to_delete is None:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+
+    success = db.query(models.Opportunity).filter(models.Phone.id == phone_to_delete.id).delete()
+    db.commit()
+    if success:
+        return {"success": bool(success), "msg": "Phone deleted"}
+    return {"success": bool(success), "msg": "Failed to delete Phone"}
+
+# endregion
+
+
 # region Pilar Member
 
 
@@ -205,13 +254,39 @@ def create_porto_member(db, porto_mbm):
 def get_porto_member(db, skip, limit):
     return db.query(models.PortoMember).offset(skip).limit(limit).all()
 
+
 def get_porto_member_by_id(db, op_id):
     return db.query(models.PortoMember).filter(models.PortoMember.id == op_id).first()
 
 
+def update_porto_member(db, user: schemas.SchemePortoMember):
+    old_user = get_member(db, id_user=user.id)
+
+    if old_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user_dict = user.dict()
+    user_dict["id"] = old_user.id
+
+    success = db.query(models.PortoMember).filter(models.PortoMember.id == old_user.id).update(user_dict)
+    db.commit()
+    return {"success": bool(success), "msg": ""}
+
+
+def delete_porto_member(db, porto_member: schemas.SchemePortoMember):
+    porto_member_to_delete = get_porto_member_by_id(db, op_id=porto_member.id)
+    if porto_member_to_delete is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    success = db.query(models.PilarMember).filter(models.PortoMember.id == porto_member_to_delete.id).delete()
+    db.commit()
+    if success:
+        return {"success": bool(success), "msg": "User " + porto_member_to_delete.name + " deleted!"}
+    else:
+        return {"fail": bool(success), "msg": "User +" + porto_member_to_delete.name + " was not deleted!"}
 # endregion
 
-
+# TODO update e delete
 # region Post
 
 
@@ -231,6 +306,39 @@ def get_posts_by_id_user(db, id_user, skip, limit):
     return db.query(models.PilarMemberPost).filter(models.PilarMemberPost.user_id == id_user). \
         offset(skip).limit(limit).all()
 
+
+def get_posts_by_id_user_without_offset(db, id_user):
+    return db.query(models.PilarMemberPost).filter(models.PilarMemberPost.user_id == id_user)
+
+
+def update_post(db, post: schemas.SchemePilarMemberPost):
+    old_post = get_posts_by_id_user_without_offset(db, id_user=post.id)
+
+    if old_post is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    post_dict = post.dict()
+    post_dict["id"] = old_post.id
+
+    success = db.query(models.PilarMemberPost).filter(models.PilarMemberPost.id == old_post.id).update(post_dict)
+    db.commit()
+    if success:
+        return {"success": bool(success), "msg": "User " + post.id.__str__() + " updated!"}
+    else:
+        return {"fail": bool(success), "msg": "User +" + post.id.__str__() + " was not deleted!"}
+
+
+def delete_post(db, post: schemas.SchemePilarMemberPost):
+    post_to_delete = get_posts_by_id_user_without_offset(db, id_user=post.id)
+    if post_to_delete is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    success = db.query(models.PilarMemberPost).filter(models.PilarMemberPost.id == post_to_delete.id).delete()
+    db.commit()
+    if success:
+        return {"success": bool(success), "msg": "User " + post.id.__str__() + " deleted!"}
+    else:
+        return {"fail": bool(success), "msg": "User +" + post.id.__str__() + " was not deleted!"}
 
 # endregion
 
@@ -383,19 +491,3 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
 
 
 # endregion
-
-
-def get_phones(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Phone).offset(skip).limit(limit).all()
-
-
-def create_phone(db, phone: schemas.SchemePhone):
-    db_phone = models.Phone(**phone.dict())
-    db.add(db_phone)
-    db.commit()
-    db.refresh(db_phone)
-    return db_phone
-
-
-def get_phones_by_id_user(db, id_user):
-    return db.query(models.Phone).filter(models.Phone.id_user == id_user).all()

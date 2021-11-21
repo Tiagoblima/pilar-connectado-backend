@@ -82,20 +82,6 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return jsonable_encoder(db_user)
 
 
-@app.put("/v1/users/{user_id}/", tags=["Usuarios"])
-def update_user(user: schemas.SchemeUsers, db: Session = Depends(get_db)):
-    response = crud.update_user(db, user=user)
-
-    return response
-
-
-@app.delete("/v1/users/{user_id}/", tags=["Usuarios"])
-def delete_user(user: schemas.SchemeUsers, db: Session = Depends(get_db)):
-    response = crud.delete_user(db, user=user)
-
-    return response
-
-
 @app.get("/v1/users/me", tags=["Usuarios"])
 def read_current_user(username: str = Depends(get_current_username)):
     return {"username": username}
@@ -109,7 +95,21 @@ def read_pilar_member(id_user: int, db: Session = Depends(get_db)):
 
     return member_json
 
-# endregion
+
+@app.put("/v1/users/{user_id}/", tags=["Usuarios"])
+def update_user(user: schemas.SchemeUsers, db: Session = Depends(get_db)):
+    response = crud.update_user(db, user=user)
+
+    return response
+
+
+@app.delete("/v1/users/{user_id}/", tags=["Usuarios"])
+def delete_user(user: schemas.SchemeUsers, db: Session = Depends(get_db)):
+    response = crud.delete_user(db, user=user)
+
+    return response
+
+# endregionS
 
 
 #  region REST Mobile Phone
@@ -145,7 +145,18 @@ def read_phones(id_user: int, db: Session = Depends(get_db)):
     return jsonable_encoder(phones)
 
 
+@app.put("/v1/phone/by/user/{id_user}/", tags=["Phone"])
+def update_phone(phone: schemas.SchemePhone, db: Session = Depends(get_db)):
+    response = crud.update_phone(db, phone=phone)
 
+    return response
+
+
+@app.delete("/v1/phone/by/user/{id_user}/", tags=["Phone"])
+def delete_phone(phone: schemas.SchemePhone, db: Session = Depends(get_db)):
+    response = crud.delete_phone(db, phone=phone)
+
+    return response
 
 # endregion
 
@@ -175,6 +186,21 @@ def read_pilar_member_by_skill(id_skill: int, skip: int = 0, limit: int = 100, d
 
     return users
 
+
+@app.put("/v1/pilar_member/{user_id}/", tags=["Pilar Member"])
+def update_pilar_member(pilar_mbm: schemas.SchemePilarMember, db: Session = Depends(get_db)):
+    response = crud.update_pilar_member(db, user=pilar_mbm)
+
+    return response
+
+
+@app.delete("/v1/pilar_member/{user_id}/", tags=["Pilar Member"])
+def delete_pilar_member(pilar_mbm: schemas.SchemePilarMember, db: Session = Depends(get_db)):
+    response = crud.delete_pilar_member(db, pilar_member=pilar_mbm)
+
+    return response
+
+
 # endregion
 
 
@@ -201,6 +227,20 @@ def read_porto_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
 def get_porto_member_by_id(op_id: int, db: Session = Depends(get_db)):
     porto_mbm = crud.get_porto_member_by_id(db, op_id=op_id)
     return jsonable_encoder(porto_mbm)
+
+
+@app.put("/v1/porto_member/by/id/{op_id}/", tags=["Porto Member"])
+def update_porto_member(porto_mbm: schemas.SchemePortoMember, db: Session = Depends(get_db)):
+    response = crud.update_porto_member(db, user=porto_mbm)
+
+    return response
+
+
+@app.delete("/v1/porto_member/by/id/{op_id}/", tags=["Porto Member"])
+def delete_porto_member(porto_mbm: schemas.SchemePortoMember, db: Session = Depends(get_db)):
+    response = crud.delete_porto_member(db, porto_member=porto_mbm)
+
+    return response
 
 # endregion
 
@@ -229,9 +269,24 @@ def read_posts_by_user_id(user_id: int, skip: int = 0, limit: int = 100, db: Ses
                       "rate": post.rate} for post in db_post]
     return returned_post
 
+
+@app.put("/v1/posts/{id_post}", tags=["Porto Member"])
+def update_post(post: schemas.SchemePilarMemberPost, db: Session = Depends(get_db)):
+    response = crud.update_post(db, post=post)
+
+    return response
+
+
+@app.delete("/v1/porto_member/by/id/{op_id}/", tags=["Porto Member"])
+def delete_porto_member(post: schemas.SchemePilarMemberPost, db: Session = Depends(get_db)):
+    response = crud.delete_post(db, post=post)
+
+    return response
+
 # endregion
 
 
+# TODO: update and delete
 # region REST SKILL
 
 
