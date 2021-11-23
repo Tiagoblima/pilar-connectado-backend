@@ -394,6 +394,18 @@ def get_opportunity_by_id(id_skill: int, skip: int = 0, limit: int = 100, db: Se
     return returned_opportunity_list
 
 
+@app.get("/v1/opportunity/by/value/{value}/", response_model=List[schemas.SchemeOpportunity], tags=["Opportunity"])
+def get_opportunity_by_value(value: float, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_opportunity = crud.get_opportunity_by_value(db, value=value, skip=skip, limit=limit)
+    returned_opportunity_list = [{"id": opportunity.id, "id_portomember": opportunity.id_portomember,
+                                  "startDate": opportunity.startDate,
+                                  "endDate": opportunity.endDate, "isactive": opportunity.isactive,
+                                  "description": opportunity.description,
+                                  "id_skill": opportunity.id_skill, "value": opportunity.value} for opportunity in
+                                 db_opportunity]
+    return returned_opportunity_list
+
+
 @app.put("/v1/opportunity/{op_id}/", tags=["Opportunity"])
 def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Depends(get_db)):
     response = crud.update_opportunity(db, opportunity=opportunity)

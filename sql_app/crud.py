@@ -402,6 +402,11 @@ def get_opportunity_by_porto_member_id(db, id_porto_member, skip, limit):
         offset(skip).limit(limit).all()
 
 
+def get_opportunity_by_value(db, value, skip, limit):
+    return db.query(models.Opportunity).filter(models.Opportunity.value == value). \
+        offset(skip).limit(limit).all()
+
+
 def update_opportunity(db, opportunity: schemas.SchemeOpportunity):
     old_opportunity = get_opportunity_by_id(db, op_id=opportunity.id)
 
