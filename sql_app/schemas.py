@@ -48,8 +48,8 @@ class SchemeSkillPilarMember(BaseModel):
     id: Optional[int]
     id_pilarmember: int  # foreign key
     id_skill: int  # foreign key
-    xp: int
-    description: str
+    xp: Optional[int]
+    description: Optional[str]
 
 
 class SchemeMatch(BaseModel):
