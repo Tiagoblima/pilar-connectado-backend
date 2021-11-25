@@ -299,9 +299,7 @@ def create_skill(skill: schemas.SchemeSkill = Body(...), db: Session = Depends(g
 @app.post("/v1/skill_pilar_member/", response_model=schemas.SchemeSkillPilarMember, tags=["Skill Pilar Member"])
 def create_skill(skill_pilar_member: schemas.SchemeSkillPilarMember = Body(...), db: Session = Depends(get_db)):
     skill_pilar_member = crud.create_skill_pilar_member(db=db, skill_pilar_member=skill_pilar_member)
-    return {"id": skill_pilar_member.id, "id_pilarmember": skill_pilar_member.id_pilarmember,
-            "id_skill": skill_pilar_member.id_skill,
-            "xp": skill_pilar_member.xp, "description": skill_pilar_member.description}
+    return jsonable_encoder(skill_pilar_member)
 
 
 @app.get("/v1/skill/", response_model=List[schemas.SchemeSkill], tags=["Skill"])
@@ -319,11 +317,9 @@ def get_skill_by_id(op_id: int, db: Session = Depends(get_db)):
 
 @app.get("/v1/skill_pilar_member/", response_model=List[schemas.SchemeSkillPilarMember], tags=["Skill Pilar Member"])
 def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    db_skill = crud.get_skill_pilar_member(db, skip=skip, limit=limit)
-    returned_skill_list = [{"id": skill_pilar_member.id, "id_pilarmember": skill_pilar_member.id_pilarmember,
-                            "id_skill": skill_pilar_member.id_skill, "xp": skill_pilar_member.xp,
-                            "description": skill_pilar_member.description} for skill_pilar_member in db_skill]
-    return returned_skill_list
+    db_skill_pilar_member = crud.get_skill_pilar_member(db, skip=skip, limit=limit)
+
+    return jsonable_encoder(db_skill_pilar_member)
 
 # endregion
 
