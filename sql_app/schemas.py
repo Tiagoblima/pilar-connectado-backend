@@ -42,6 +42,7 @@ class SchemePilarMemberPost(BaseModel):
     id: Optional[int]
     user_id: int  # foreign key
     description: str
+    title: Optional[str]
     rate: int
 
 

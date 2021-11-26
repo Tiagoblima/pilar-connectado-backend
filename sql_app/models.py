@@ -69,6 +69,7 @@ class PilarMemberPost(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     description = Column(String)
     rate = Column(Integer)
+    title = Column(String)
     user_id = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'))
 
     class Config:
