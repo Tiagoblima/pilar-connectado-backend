@@ -37,6 +37,7 @@ class SchemePortoMember(BaseModel):
     workaddress: str
     company_name: Optional[str]
 
+
 class SchemePilarMemberPost(BaseModel):
     id: Optional[int]
     user_id: int  # foreign key

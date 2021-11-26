@@ -46,7 +46,7 @@ class PilarMember(Base):
     id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'), unique=True)
     introduction = Column(String)
     instagram = Column(String)
-    evaluation = Column(Float, default=0)
+    evaluation = Column(Float, default=1)
 
     class Config:
         orm_mode = True
