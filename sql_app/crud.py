@@ -160,6 +160,7 @@ def delete_phone(db, phone: schemas.SchemePhone):
         return {"success": bool(success), "msg": "Phone deleted"}
     return {"success": bool(success), "msg": "Failed to delete Phone"}
 
+
 # endregion
 
 
@@ -189,6 +190,10 @@ def get_member(db, id_user):
 
 def get_pilar_member_by_id(db: Session, pilar_member_id: int):
     return db.query(models.PilarMember).filter(models.PilarMember.id == pilar_member_id).first()
+
+
+def get_pilar_member_by_user_id(db, user_id):
+    return db.query(models.PilarMember).filter(models.PilarMember.id_user == user_id).first()
 
 
 def get_pilar_member_by_skill(db, id_skill, skip, limit):
@@ -284,6 +289,8 @@ def delete_porto_member(db, porto_member: schemas.SchemePortoMember):
         return {"success": bool(success), "msg": "User " + porto_member_to_delete.name + " deleted!"}
     else:
         return {"fail": bool(success), "msg": "User +" + porto_member_to_delete.name + " was not deleted!"}
+
+
 # endregion
 
 # TODO update e delete
@@ -340,6 +347,7 @@ def delete_post(db, post: schemas.SchemePilarMemberPost):
     else:
         return {"fail": bool(success), "msg": "User +" + post.id.__str__() + " was not deleted!"}
 
+
 # endregion
 
 
@@ -356,8 +364,10 @@ def create_skill(db, skill):
 def get_skill(db, skip, limit):
     return db.query(models.Skill).offset(skip).limit(limit).all()
 
+
 def get_skill_by_id(db, op_id):
     return db.query(models.Skill).filter(models.Skill.id == op_id).first()
+
 
 def create_skill_pilar_member(db, skill_pilar_member):
     db_skill = models.SkillPilarMember(**skill_pilar_member.dict())
@@ -493,6 +503,5 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     db = SessionLocal()
 
     return authenticate_user(db, username=credentials.username, password=credentials.password)
-
 
 # endregion

@@ -109,6 +109,7 @@ def delete_user(user: schemas.SchemeUsers, db: Session = Depends(get_db)):
 
     return response
 
+
 # endregionS
 
 
@@ -158,6 +159,7 @@ def delete_phone(phone: schemas.SchemePhone, db: Session = Depends(get_db)):
 
     return response
 
+
 # endregion
 
 
@@ -178,6 +180,13 @@ def read_pilar_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
                        "id_user": pilar_mbm.id_user, "evaluation": pilar_mbm.evaluation} for pilar_mbm in pilar_mbm]
 
     return pilar_mbm_list
+
+
+@app.get("/v1/pilar_member/by/user/{user_id}", response_model=List[schemas.SchemePilarMember], tags=["Pilar Member"])
+def read_pilar_member(user_id: int, db: Session = Depends(get_db)):
+    pilar_mbm = crud.get_pilar_member_by_user_id(db, user_id)
+
+    return jsonable_encoder(pilar_mbm)
 
 
 @app.get("/v1/pilar_member/by/skill/{id_skill}/", tags=["Pilar Member"])
@@ -242,6 +251,7 @@ def delete_porto_member(porto_mbm: schemas.SchemePortoMember, db: Session = Depe
 
     return response
 
+
 # endregion
 
 
@@ -283,6 +293,7 @@ def delete_porto_member(post: schemas.SchemePilarMemberPost, db: Session = Depen
 
     return response
 
+
 # endregion
 
 
@@ -320,6 +331,7 @@ def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_skill_pilar_member = crud.get_skill_pilar_member(db, skip=skip, limit=limit)
 
     return jsonable_encoder(db_skill_pilar_member)
+
 
 # endregion
 
@@ -414,6 +426,7 @@ def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Dep
     response = crud.delete_opportunity(db, opportunity=opportunity)
 
     return response, "Opportunity id: " + opportunity.id.__str__() + "was deleted"
+
 
 # endregion
 
