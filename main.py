@@ -185,7 +185,8 @@ def read_pilar_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
 @app.get("/v1/pilar_member/by/user/{user_id}/", response_model=schemas.SchemePilarMember, tags=["Pilar Member"])
 def read_pilar_member(user_id: int, db: Session = Depends(get_db)):
     pilar_mbm = crud.get_pilar_member_by_user_id(db, user_id)
-
+    if not pilar_mbm:
+        raise HTTPException(status_code=404, detail="There is no pilar member with this id user.")
     return jsonable_encoder(pilar_mbm)
 
 
