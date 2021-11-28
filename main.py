@@ -73,7 +73,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 #     return {"id": user.id, "email": user.email, "password": user.password, "name": user.name}
 
 
-@app.get("/v1/users/{user_id}/", response_model=schemas.SchemeUsers, tags=["Usuarios"])
+@app.get("/v1/user/by/id/{user_id}/", response_model=schemas.SchemeUsers, tags=["Usuarios"])
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
 
