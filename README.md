@@ -25,4 +25,4 @@ Mais informações: https://fastapi.tiangolo.com/
 
 localhost:8000/docs é a documentação
 
-
+UM arquivo .env na página root com a variavel de ambiente DATABASE_URL
