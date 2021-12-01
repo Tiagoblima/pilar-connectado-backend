@@ -128,6 +128,7 @@ class Opportunity(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_portomember = Column(Integer, ForeignKey("PortoMember.id", ondelete='CASCADE'), index=True)  # foreign key
+    title = Column(String)
     startDate = Column(String)
     endDate = Column(String)
     isactive = Column(Boolean)

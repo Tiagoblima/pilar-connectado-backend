@@ -82,6 +82,7 @@ class SchemeLogin(BaseModel):
 class SchemeOpportunity(BaseModel):
     id: Optional[int]
     id_portomember: int
+    title: Optional[str]
     startDate: str
     endDate: str
     isactive: bool
