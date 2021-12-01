@@ -264,6 +264,10 @@ def get_porto_member_by_id(db, op_id):
     return db.query(models.PortoMember).filter(models.PortoMember.id == op_id).first()
 
 
+def get_get_porto_member_by_user_id(db, op_id):
+    return db.query(models.PortoMember).filter(models.PortoMember.id_user == op_id).first()
+
+
 def update_porto_member(db, user: schemas.SchemePortoMember):
     old_user = get_member(db, id_user=user.id)
 
