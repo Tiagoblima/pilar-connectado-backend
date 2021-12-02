@@ -236,7 +236,7 @@ def get_porto_member_by_id(op_id: int, db: Session = Depends(get_db)):
     return jsonable_encoder(porto_mbm)
 
 
-@app.get("/v1/porto_member/by/userId/{op_id}/", response_model=schemas.SchemePortoMember, tags=["Porto Member"])
+@app.get("/v1/porto_member/by/user/{op_id}/", response_model=schemas.SchemePortoMember, tags=["Porto Member"])
 def get_porto_member_by_user_id(op_id: int, db: Session = Depends(get_db)):
     porto_mbm = crud.get_porto_member_by_user_id(db, op_id=op_id)
 
