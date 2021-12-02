@@ -274,17 +274,15 @@ def create_post(post: schemas.SchemePilarMemberPost = Body(...), db: Session = D
 @app.get("/v1/posts/", response_model=List[schemas.SchemePilarMemberPost], tags=["Post"])
 def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_post = crud.get_posts(db, skip=skip, limit=limit)
-    returned_post = [{"id": post.id, "user_id": post.user_id, "description": post.description,
-                      "rate": post.rate} for post in db_post]
-    return returned_post
+
+    return jsonable_encoder(db_post)
 
 
 @app.get("/v1/posts/{id_user}/", response_model=List[schemas.SchemePilarMemberPost], tags=["Post"])
 def read_posts_by_user_id(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_post = crud.get_posts_by_id_user(db, user_id, skip=skip, limit=limit)
-    returned_post = [{"id": post.id, "user_id": post.user_id, "description": post.description,
-                      "rate": post.rate} for post in db_post]
-    return returned_post
+
+    return jsonable_encoder(db_post)
 
 
 @app.put("/v1/posts/{id_post}", tags=["Porto Member"])
@@ -446,19 +444,18 @@ def create_match(match: schemas.SchemeMatch = Body(...), db: Session = Depends(g
 @app.post("/v1/match/evaluation/", response_model=schemas.SchemeMatchEvaluation, tags=["Match"])
 def create_match(evaluation: schemas.SchemeMatchEvaluation = Body(...), db: Session = Depends(get_db)):
     match = crud.create_match_evaluation(db=db, evaluation=evaluation)
-    return match.__dict__
+    return jsonable_encoder(match)
 
 
 @app.get("/v1/match/", response_model=List[schemas.SchemeMatch], tags=["Match"])
 def get_match(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     match_list = crud.get_match(db=db, skip=skip, limit=limit)
-    return [{"id": match.id, "id_opportunity": match.id_opportunity, "id_pilarmember": match.id_pilarmember,
-             "approved": match.approved} for match in match_list]
+    return jsonable_encoder(match_list)
 
 
 @app.get("/v1/match/evaluation/", response_model=List[schemas.SchemeMatchEvaluation], tags=["Match"])
 def get_match(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     evaluation_list = crud.get_match_evaluation(db=db, skip=skip, limit=limit)
-    return [match.__dict__ for match in evaluation_list]
+    return jsonable_encoder(evaluation_list)
 
 # endregion
