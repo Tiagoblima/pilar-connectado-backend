@@ -349,12 +349,7 @@ def get_skill(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 @app.post("/v1/opportunity/", response_model=schemas.SchemeOpportunity, tags=["Opportunity"])
 def create_opportunity(opportunity: schemas.SchemeOpportunity = Body(...), db: Session = Depends(get_db)):
     opportunity = crud.create_opportunity(db=db, opportunity=opportunity)
-    return {
-        "id": opportunity.id, "id_portomember": opportunity.id_portomember, "startDate": opportunity.startDate,
-        "endDate": opportunity.endDate, "isactive": opportunity.isactive,
-        "description": opportunity.description,
-        "id_skill": opportunity.id_skill, "value": opportunity.value
-    }
+    return jsonable_encoder(opportunity)
 
 
 @app.get("/v1/opportunity/", response_model=List[schemas.SchemeOpportunity], tags=["Opportunity"])
