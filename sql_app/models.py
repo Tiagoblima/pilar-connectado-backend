@@ -131,7 +131,7 @@ class Opportunity(Base):
     title = Column(String)
     startDate = Column(String)
     endDate = Column(String)
-    isactive = Column(Boolean)
+    isactive = Column(Boolean, default=True)
     description = Column(String)
     id_skill = Column(Integer, ForeignKey("Skill.id"), index=True)  # foreign key
     value = Column(Float)
