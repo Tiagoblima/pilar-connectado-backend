@@ -169,17 +169,14 @@ def delete_phone(phone: schemas.SchemePhone, db: Session = Depends(get_db)):
 @app.post("/v1/pilar_member/", response_model=schemas.SchemePilarMember, tags=["Pilar Member"])
 def create_pilar_member(pilar_mbm: schemas.SchemePilarMember = Body(...), db: Session = Depends(get_db)):
     pilar_mbm = crud.create_pilar_member(db=db, pilar_mbm=pilar_mbm)
-    return {"id": pilar_mbm.id, "introduction": pilar_mbm.introduction, "instagram": pilar_mbm.instagram,
-            "id_user": pilar_mbm.id_user, "evaluation": pilar_mbm.evaluation}
+    return jsonable_encoder(pilar_mbm)
 
 
 @app.get("/v1/pilar_member/", response_model=List[schemas.SchemePilarMember], tags=["Pilar Member"])
 def read_pilar_member(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     pilar_mbm = crud.get_pilar_member(db, skip=skip, limit=limit)
-    pilar_mbm_list = [{"id": pilar_mbm.id, "introduction": pilar_mbm.introduction, "instagram": pilar_mbm.instagram,
-                       "id_user": pilar_mbm.id_user, "evaluation": pilar_mbm.evaluation} for pilar_mbm in pilar_mbm]
 
-    return pilar_mbm_list
+    return jsonable_encoder(pilar_mbm)
 
 
 @app.get("/v1/pilar_member/by/user/{user_id}/", response_model=schemas.SchemePilarMember, tags=["Pilar Member"])
@@ -242,6 +239,10 @@ def get_porto_member_by_id(op_id: int, db: Session = Depends(get_db)):
 @app.get("/v1/porto_member/by/userId/{op_id}/", response_model=schemas.SchemePortoMember, tags=["Porto Member"])
 def get_porto_member_by_user_id(op_id: int, db: Session = Depends(get_db)):
     porto_mbm = crud.get_porto_member_by_user_id(db, op_id=op_id)
+
+    if not porto_mbm:
+        raise HTTPException(status_code=404, detail="There is no porto member with this id user.")
+
     return jsonable_encoder(porto_mbm)
 
 
