@@ -85,7 +85,7 @@ class SchemeOpportunity(BaseModel):
     title: Optional[str]
     startDate: str
     endDate: str
-    isactive: bool
+    isactive: Optional[bool]
     description: str
     id_skill: int
     value: float
