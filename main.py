@@ -184,10 +184,7 @@ def read_pilar_member(user_id: int, db: Session = Depends(get_db)):
     pilar_mbm = crud.get_pilar_member_by_user_id(db, user_id)
     if not pilar_mbm:
 
-        return {
-            "success": False,
-            "detail": "There is no pilar member with this id user."
-        }
+        raise HTTPException(status_code=204, detail="There is no pilar member with this id user.")
     return jsonable_encoder(pilar_mbm)
 
 
