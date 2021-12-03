@@ -183,6 +183,7 @@ def read_pilar_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
 def read_pilar_member(user_id: int, db: Session = Depends(get_db)):
     pilar_mbm = crud.get_pilar_member_by_user_id(db, user_id)
     if not pilar_mbm:
+
         return {
             "success": False,
             "detail": "There is no pilar member with this id user."
