@@ -475,6 +475,18 @@ def get_match_evaluation(db, skip, limit):
     return db.query(models.MatchEvaluation).offset(skip).limit(limit).all()
 
 
+def get_match_by_id(db, match_id):
+    return db.query(models.Match).filter(models.Match.id == match_id).first()
+
+
+def get_match_by_pilar(db, id_pilarmember):
+    return db.query(models.Match).filter(models.Match.id_pilarmember == id_pilarmember).first()
+
+
+def get_match_by_opportunity(db, id_opportunity):
+    return db.query(models.Match).filter(models.Match.id_opportunity == id_opportunity).all()
+
+
 # endregion
 
 

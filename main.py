@@ -123,7 +123,7 @@ def create_user(user: schemas.SchemeUsers = Body(...), db: Session = Depends(get
         raise HTTPException(status_code=400, detail="Email already registered")
 
     user = crud.create_user(db=db, user=user)
-    return {"id": user.id, "email": user.email, "password": user.password, "name": user.name}
+    return jsonable_encoder(user)
 
 
 @app.post("/v1/phone/", tags=["Phone"])
@@ -183,7 +183,6 @@ def read_pilar_member(skip: int = 0, limit: int = 100, db: Session = Depends(get
 def read_pilar_member(user_id: int, db: Session = Depends(get_db)):
     pilar_mbm = crud.get_pilar_member_by_user_id(db, user_id)
     if not pilar_mbm:
-
         raise HTTPException(status_code=204, detail="There is no pilar member with this id user.")
     return jsonable_encoder(pilar_mbm)
 
@@ -225,10 +224,7 @@ def create_porto_member(porto_mbm: schemas.SchemePortoMember = Body(...), db: Se
 def read_porto_member(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     porto_mbm = crud.get_porto_member(db, skip=skip, limit=limit)
 
-    porto_mbm_list = [{"id": porto_mbm.id, "workaddress": porto_mbm.workaddress, "id_user": porto_mbm.id_user}
-                      for porto_mbm in porto_mbm]
-
-    return porto_mbm_list
+    return jsonable_encoder(porto_mbm)
 
 
 @app.get("/v1/porto_member/by/id/{op_id}/", response_model=schemas.SchemePortoMember, tags=["Porto Member"])
@@ -355,13 +351,8 @@ def create_opportunity(opportunity: schemas.SchemeOpportunity = Body(...), db: S
 @app.get("/v1/opportunity/", response_model=List[schemas.SchemeOpportunity], tags=["Opportunity"])
 def get_opportunity(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_opportunity = crud.get_opportunity(db, skip=skip, limit=limit)
-    returned_opportunity_list = [{"id": opportunity.id, "id_portomember": opportunity.id_portomember,
-                                  "startDate": opportunity.startDate,
-                                  "endDate": opportunity.endDate, "isactive": opportunity.isactive,
-                                  "description": opportunity.description,
-                                  "id_skill": opportunity.id_skill, "value": opportunity.value} for opportunity in
-                                 db_opportunity]
-    return returned_opportunity_list
+
+    return jsonable_encoder(db_opportunity)
 
 
 @app.get("/v1/opportunity/by/id/{op_id}/", response_model=schemas.SchemeOpportunity, tags=["Opportunity"])
@@ -369,11 +360,7 @@ def get_opportunity_by_id(op_id: int, db: Session = Depends(get_db)):
     opportunity = crud.get_opportunity_by_id(db, op_id=op_id)
     # returned_opportunity_list = [ for opportunity in
     #                              db_opportunity]
-    return {"id": opportunity.id, "id_portomember": opportunity.id_portomember,
-            "startDate": opportunity.startDate,
-            "endDate": opportunity.endDate, "isactive": opportunity.isactive,
-            "description": opportunity.description,
-            "id_skill": opportunity.id_skill, "value": opportunity.value}
+    return jsonable_encoder(opportunity)
 
 
 @app.get("/v1/opportunity/by/porto_member_id/{porto_member_id}/", response_model=List[schemas.SchemeOpportunity],
@@ -438,6 +425,12 @@ def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Dep
 
 @app.post("/v1/match/", response_model=schemas.SchemeMatch, tags=["Match"])
 def create_match(match: schemas.SchemeMatch = Body(...), db: Session = Depends(get_db)):
+    db_match_list = crud.get_match_by_opportunity(db, id_opportunity=match.id_opportunity)
+
+    for db_match in db_match_list:
+        if db_match.id_pilarmember == match.id_pilarmember:
+            raise HTTPException(status_code=400, detail="Match already registered")
+
     match = crud.create_match(db=db, match=match)
     return jsonable_encoder(match)
 
