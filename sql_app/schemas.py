@@ -58,7 +58,7 @@ class SchemeMatch(BaseModel):
     id: Optional[int]
     id_pilarmember: int  # foreign key
     id_opportunity: int  # foreign key
-    approved: bool
+    approved: Optional[bool]
 
 
 class SchemeMatchEvaluation(BaseModel):
