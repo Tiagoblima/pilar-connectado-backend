@@ -439,8 +439,7 @@ def update_opportunity(opportunity: schemas.SchemeOpportunity, db: Session = Dep
 @app.post("/v1/match/", response_model=schemas.SchemeMatch, tags=["Match"])
 def create_match(match: schemas.SchemeMatch = Body(...), db: Session = Depends(get_db)):
     match = crud.create_match(db=db, match=match)
-    return {"id": match.id, "id_opportunity": match.id_opportunity, "id_pilarmember": match.id_pilarmember,
-            "approved": match.approved}
+    return jsonable_encoder(match)
 
 
 @app.post("/v1/match/evaluation/", response_model=schemas.SchemeMatchEvaluation, tags=["Match"])
