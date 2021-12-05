@@ -453,3 +453,41 @@ def get_match(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return jsonable_encoder(evaluation_list)
 
 # endregion
+
+
+# region Previous Match Member
+
+@app.post("/v1/previous_match_member/", response_model=schemas.SchemePreviousMatchMember,
+          tags=["Previous Match Member"])
+def create_previous_match_member(previous_match_member: schemas.SchemePreviousMatchMember = Body(...),
+                                 db: Session = Depends(get_db)):
+    match_member = crud.create_previous_match_member(db=db, previous_match_member=previous_match_member)
+    return jsonable_encoder(match_member)
+
+
+@app.get("/v1/previous_match_members/", response_model=List[schemas.SchemePreviousMatchMember], tags=["Previous Match Member"])
+def get_previous_match_members(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    previous_match_members_list = crud.get_previous_match_member(db=db, skip=skip, limit=limit)
+    return jsonable_encoder(previous_match_members_list)
+
+
+@app.get("/v1/previous_match_member/{porto_member_user_id}", response_model=List[schemas.SchemePreviousMatchMember],
+         tags=["Previous Match Member"])
+def get_previous_match_member(porto_member_user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_previous_match_member_by_porto_member(db, porto_member_user_id=porto_member_user_id)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return jsonable_encoder(db_user)
+
+
+@app.get("/v1/previous_match_member_amount/{porto_member_user_id}", tags=["Previous Match Member"])
+def get_previous_match_member_amount(porto_member_user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_previous_match_member_by_porto_member(db, porto_member_user_id=porto_member_user_id)
+
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return len(jsonable_encoder(db_user))
+
+# endregion
