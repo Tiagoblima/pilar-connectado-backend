@@ -276,7 +276,7 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return jsonable_encoder(db_post)
 
 
-@app.get("/v1/posts/{id_user}/", response_model=List[schemas.SchemePilarMemberPost], tags=["Post"])
+@app.get("/v1/posts/{user_id}/", response_model=List[schemas.SchemePilarMemberPost], tags=["Post"])
 def read_posts_by_user_id(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_post = crud.get_posts_by_id_user(db, user_id, skip=skip, limit=limit)
 
@@ -369,14 +369,9 @@ def get_opportunity_by_porto_member_id(porto_member_id: int, skip: int = 0, limi
                                        db: Session = Depends(get_db)):
     db_opportunity = crud.get_opportunity_by_porto_member_id(db, id_porto_member=porto_member_id, skip=skip,
                                                              limit=limit)
-    returned_opportunity_list = [{"id": opportunity.id, "id_portomember": opportunity.id_portomember,
-                                  "startDate": opportunity.startDate,
-                                  "endDate": opportunity.endDate, "isactive": opportunity.isactive,
-                                  "description": opportunity.description,
-                                  "id_skill": opportunity.id_skill, "value": opportunity.value} for opportunity in
-                                 db_opportunity]
 
-    return returned_opportunity_list
+
+    return jsonable_encoder(db_opportunity)
 
 
 @app.get("/v1/opportunity/by/skill/{id_skill}/", response_model=List[schemas.SchemeOpportunity], tags=["Opportunity"])
