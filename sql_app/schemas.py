@@ -1,6 +1,5 @@
 from typing import Optional
 from pydantic import BaseModel
-from sqlalchemy.sql.sqltypes import DateTime, Time, Date
 
 """
 Interage com o REST para o usuário.
@@ -67,6 +66,16 @@ class SchemeMatchEvaluation(BaseModel):
     comment: str  # foreign key
     id_user: int
     stars: float
+
+
+class SchemePreviousMatchMember(BaseModel):
+    id: Optional[int]
+    id_match: int
+    id_match_user: int
+    porto_member_user_id: int
+
+
+#class SchemePreviousMatchMember(BaseModel)
 
 
 class SchemeSkill(BaseModel):

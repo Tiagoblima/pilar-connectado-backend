@@ -489,6 +489,28 @@ def get_match_by_opportunity(db, id_opportunity):
 
 # endregion
 
+# region Previous Match Member
+
+def create_previous_match_member(db, previous_match_member: schemas.SchemePreviousMatchMember):
+    print("-------------------------------------")
+    print("chegou no crud")
+    db_previous_match_member = models.PreviousMatchMember(**previous_match_member.dict())
+    db.add(db_previous_match_member)
+    db.commit()
+    db.refresh(db_previous_match_member)
+    return db_previous_match_member
+
+
+def get_previous_match_member(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.PreviousMatchMember).offset(skip).limit(limit).all()
+
+
+def get_previous_match_member_by_porto_member(db: Session, porto_member_user_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.PreviousMatchMember).\
+        filter(models.PreviousMatchMember.porto_member_user_id == porto_member_user_id).offset(skip).\
+        limit(limit).all()
+
+# endregion
 
 # region Login
 

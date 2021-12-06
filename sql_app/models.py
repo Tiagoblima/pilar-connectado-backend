@@ -1,11 +1,10 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, Date, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean
 from sqlalchemy.orm import relationship
 
 from .database import Base
 
 """
 Faz o mapeamento para o banco de dados
-
 """
 
 
@@ -41,7 +40,6 @@ class Phone(Base):
 
 class PilarMember(Base):
     __tablename__ = "PilarMember"
-    # Column(Integer, ForeignKey("User.id"), primary_key=True, index=True)
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'), unique=True)
     introduction = Column(String)
@@ -57,8 +55,11 @@ class PortoMember(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'), index=True)
+    previous_matches_members = relationship("PreviousMatchMember", backref="previous_match_member")
+    #id_previous_matches_members = Column(Integer, ForeignKey("PreviousMatchMember.id"), index=True)
     workaddress = Column(String)
     company_name = Column(String)
+
     class Config:
         orm_mode = True
 
@@ -118,6 +119,18 @@ class MatchEvaluation(Base):
     id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'), index=True)  # foreign key
     comment = Column(String, index=True, default=False)
     stars = Column(Float, index=True)
+
+    class Config:
+        orm_mode = True
+
+
+class PreviousMatchMember(Base):
+    __tablename__ = "PreviousMatchMember"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id_match = Column(Integer, ForeignKey("Match.id", ondelete='CASCADE'), index=True)
+    id_match_user = Column(Integer, ForeignKey("PilarMember.id", ondelete='CASCADE'), index=True)
+    porto_member_user_id = Column(Integer, ForeignKey("PortoMember.id", ondelete='CASCADE'), index=True)
 
     class Config:
         orm_mode = True

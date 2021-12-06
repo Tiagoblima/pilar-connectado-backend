@@ -35,5 +35,28 @@ def test_post_opportunity():
     }
 
 
+def test_get_previous_match_members():
+    response = client.get("/v1/previous_match_members/")
+    assert response.status_code == 200
+    assert type(response.json()) == list
+
+
+def test_post_previous_match_members():
+    response = client.post(
+        "/v1/previous_match_member/",
+        json={"id": 3, "id_match": 3,
+              "id_match_user": 1,
+              "porto_member_user_id": 6
+              },
+    )
+    assert response.status_code == 200
+    assert response.json() == {
+        "id": 3,
+        "id_match": 3,
+        "id_match_user": 1,
+        "porto_member_user_id": 6
+    }
+
+
 if __name__ == '__main__':
     unittest.main()
