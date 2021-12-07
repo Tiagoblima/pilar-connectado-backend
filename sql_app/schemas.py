@@ -45,6 +45,13 @@ class SchemePilarMemberPost(BaseModel):
     rate: int
 
 
+class SchemePostImage(BaseModel):
+    id: Optional[int]
+    id_post: int  # foreign key
+    image: bytes
+    filename: str
+    size: int
+
 class SchemeSkillPilarMember(BaseModel):
     id: Optional[int]
     id_pilarmember: int  # foreign key
@@ -75,7 +82,7 @@ class SchemePreviousMatchMember(BaseModel):
     porto_member_user_id: int
 
 
-#class SchemePreviousMatchMember(BaseModel)
+# class SchemePreviousMatchMember(BaseModel)
 
 
 class SchemeSkill(BaseModel):
