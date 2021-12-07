@@ -1,3 +1,4 @@
+import io
 from typing import List
 
 from fastapi import Depends, HTTPException, UploadFile
@@ -5,6 +6,7 @@ from fastapi import FastAPI, Body
 from fastapi.encoders import jsonable_encoder
 from fastapi.params import File
 from sqlalchemy.orm import Session
+from starlette.responses import FileResponse, StreamingResponse
 
 from sql_app.crud import get_current_username
 
@@ -284,11 +286,11 @@ def read_posts_by_user_id(user_id: int, skip: int = 0, limit: int = 100, db: Ses
     return jsonable_encoder(db_post)
 
 
-@app.get("/v1/posts/image/by/postsId/{id_post}/", response_model=List[schemas.SchemePostImage], tags=["Post Image"])
+@app.get("/v1/posts/image/by/postsId/{id_post}/", tags=["Post Image"])
 def read_posts_by_user_id(id_post: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_post = crud.get_image_by_post_id(db, id_post, skip=skip, limit=limit)
 
-    return [post_image.__dict__() for post_image in db_post]
+    return [FileResponse(post_image.filename) for post_image in db_post]
 
 
 @app.post("/v1/posts/image/{id_post}/", tags=["Post Image"])
