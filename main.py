@@ -288,7 +288,7 @@ def read_posts_by_user_id(user_id: int, skip: int = 0, limit: int = 100, db: Ses
 def read_posts_by_user_id(id_post: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_post = crud.get_image_by_post_id(db, id_post, skip=skip, limit=limit)
 
-    return jsonable_encoder(db_post)
+    return [post_image.__dict__() for post_image in db_post]
 
 
 @app.post("/v1/posts/image/{id_post}/", tags=["Post Image"])
@@ -507,3 +507,4 @@ def get_previous_match_member_amount(porto_member_user_id: int, db: Session = De
     return len(jsonable_encoder(db_user))
 
 # endregion
+

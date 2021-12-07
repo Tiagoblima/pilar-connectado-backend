@@ -403,6 +403,7 @@ def get_opportunity(db, skip, limit):
 
 
 def get_opportunity_by_id(db, op_id):
+
     return db.query(models.Opportunity).filter(models.Opportunity.id == op_id).first()
 
 
