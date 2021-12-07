@@ -75,9 +75,6 @@ class SchemePreviousMatchMember(BaseModel):
     porto_member_user_id: int
 
 
-#class SchemePreviousMatchMember(BaseModel)
-
-
 class SchemeSkill(BaseModel):
     id: Optional[int]
     name: str

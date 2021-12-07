@@ -1,5 +1,8 @@
 from typing import List
 
+from datetime import datetime
+
+from fastapi_utils.tasks import repeat_every
 from fastapi import Depends, HTTPException
 from fastapi import FastAPI, Body
 from fastapi.encoders import jsonable_encoder
@@ -10,6 +13,8 @@ from sql_app.crud import get_current_username
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
+
+import VerifyDateChange
 
 # Cors
 origins = [
@@ -42,6 +47,23 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+@app.on_event("startup")
+@repeat_every(seconds=3600)  # 1 hour
+def inactivate_opportunities(skip: int = 0, limit: int = 100):
+    db = SessionLocal()
+    try:
+        db_opportunity = crud.get_opportunity(db, skip=skip, limit=limit)
+        for opportunity in db_opportunity:
+            now = datetime.today()
+            opportunity_end_date = datetime.strptime(opportunity.endDate, '%d/%m/%Y')
+            if opportunity_end_date < now and opportunity.isactive is True:
+                crud.update_active_status(db, opportunity, False)
+
+    except Exception as e:
+        print("Error: ", e.__str__())
+
 
 
 # region REST USER
@@ -491,3 +513,4 @@ def get_previous_match_member_amount(porto_member_user_id: int, db: Session = De
     return len(jsonable_encoder(db_user))
 
 # endregion
+
