@@ -45,6 +45,13 @@ class SchemePilarMemberPost(BaseModel):
     rate: int
 
 
+class SchemePostImage(BaseModel):
+    id: Optional[int]
+    id_post: int  # foreign key
+    image: bytes
+    filename: str
+    size: int
+
 class SchemeSkillPilarMember(BaseModel):
     id: Optional[int]
     id_pilarmember: int  # foreign key

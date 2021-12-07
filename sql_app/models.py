@@ -1,4 +1,5 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean
+
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Boolean, Binary
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -56,7 +57,7 @@ class PortoMember(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     id_user = Column(Integer, ForeignKey("Users.id", ondelete='CASCADE'), index=True)
     previous_matches_members = relationship("PreviousMatchMember", backref="previous_match_member")
-    #id_previous_matches_members = Column(Integer, ForeignKey("PreviousMatchMember.id"), index=True)
+    # id_previous_matches_members = Column(Integer, ForeignKey("PreviousMatchMember.id"), index=True)
     workaddress = Column(String)
     company_name = Column(String)
 
@@ -77,8 +78,20 @@ class PilarMemberPost(Base):
         orm_mode = True
 
 
+class PostImage(Base):
+    __tablename__ = "PostImage"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True, nullable=False)  # primary key
+    id_post = Column(Integer, nullable=False)
+    image = Column(Binary)
+    filename = Column(String)
+    size = Column(Integer)
+    class Config:
+        orm_mode = True
+
+
 class Skill(Base):
     __tablename__ = "Skill"
+
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)  # primary key
     name = Column(String)
 

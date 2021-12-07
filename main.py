@@ -4,8 +4,10 @@ from datetime import datetime
 
 from fastapi_utils.tasks import repeat_every
 from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, UploadFile
 from fastapi import FastAPI, Body
 from fastapi.encoders import jsonable_encoder
+from fastapi.params import File
 from sqlalchemy.orm import Session
 
 from sql_app.crud import get_current_username
@@ -228,7 +230,7 @@ def delete_pilar_member(pilar_mbm: schemas.SchemePilarMember, db: Session = Depe
 @app.post("/v1/porto_member/", response_model=schemas.SchemePortoMember, tags=["Porto Member"])
 def create_porto_member(porto_mbm: schemas.SchemePortoMember = Body(...), db: Session = Depends(get_db)):
     porto_mbm = crud.create_porto_member(db=db, porto_mbm=porto_mbm)
-    return {"id": porto_mbm.id, "workaddress": porto_mbm.workaddress, "id_user": porto_mbm.id_user}
+    return jsonable_encoder(porto_mbm)
 
 
 @app.get("/v1/porto_member/", response_model=List[schemas.SchemePortoMember], tags=["Porto Member"])
@@ -287,14 +289,33 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return jsonable_encoder(db_post)
 
 
-@app.get("/v1/posts/{id_user}/", response_model=List[schemas.SchemePilarMemberPost], tags=["Post"])
+@app.get("/v1/posts/{user_id}/", response_model=List[schemas.SchemePilarMemberPost], tags=["Post"])
 def read_posts_by_user_id(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_post = crud.get_posts_by_id_user(db, user_id, skip=skip, limit=limit)
 
     return jsonable_encoder(db_post)
 
 
-@app.put("/v1/posts/{id_post}", tags=["Porto Member"])
+@app.get("/v1/posts/image/by/postsId/{id_post}/", response_model=List[schemas.SchemePostImage], tags=["Post Image"])
+def read_posts_by_user_id(id_post: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_post = crud.get_image_by_post_id(db, id_post, skip=skip, limit=limit)
+
+    return jsonable_encoder(db_post)
+
+
+@app.post("/v1/posts/image/{id_post}/", tags=["Post Image"])
+def read_posts_by_user_id(id_post: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
+    image = {"id_post": id_post, "image": file.file.read(), "filename": file.filename, "size": file.__sizeof__()}
+
+    try:
+        db_post = crud.create_post_image(db, image=image)
+        print(db_post)
+    except Exception:
+        return {"success": False, "detail": "Image could not be stored."}
+    return {"success": True, "detail": "Image stored successfully"}
+
+
+@app.put("/v1/posts/{id_post}/", tags=["Porto Member"])
 def update_post(post: schemas.SchemePilarMemberPost, db: Session = Depends(get_db)):
     response = crud.update_post(db, post=post)
 
@@ -380,14 +401,8 @@ def get_opportunity_by_porto_member_id(porto_member_id: int, skip: int = 0, limi
                                        db: Session = Depends(get_db)):
     db_opportunity = crud.get_opportunity_by_porto_member_id(db, id_porto_member=porto_member_id, skip=skip,
                                                              limit=limit)
-    returned_opportunity_list = [{"id": opportunity.id, "id_portomember": opportunity.id_portomember,
-                                  "startDate": opportunity.startDate,
-                                  "endDate": opportunity.endDate, "isactive": opportunity.isactive,
-                                  "description": opportunity.description,
-                                  "id_skill": opportunity.id_skill, "value": opportunity.value} for opportunity in
-                                 db_opportunity]
 
-    return returned_opportunity_list
+    return jsonable_encoder(db_opportunity)
 
 
 @app.get("/v1/opportunity/by/skill/{id_skill}/", response_model=List[schemas.SchemeOpportunity], tags=["Opportunity"])
@@ -463,6 +478,7 @@ def get_match(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     evaluation_list = crud.get_match_evaluation(db=db, skip=skip, limit=limit)
     return jsonable_encoder(evaluation_list)
 
+
 # endregion
 
 
@@ -476,7 +492,8 @@ def create_previous_match_member(previous_match_member: schemas.SchemePreviousMa
     return jsonable_encoder(match_member)
 
 
-@app.get("/v1/previous_match_members/", response_model=List[schemas.SchemePreviousMatchMember], tags=["Previous Match Member"])
+@app.get("/v1/previous_match_members/", response_model=List[schemas.SchemePreviousMatchMember],
+         tags=["Previous Match Member"])
 def get_previous_match_members(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     previous_match_members_list = crud.get_previous_match_member(db=db, skip=skip, limit=limit)
     return jsonable_encoder(previous_match_members_list)

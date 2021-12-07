@@ -380,6 +380,19 @@ def get_opportunity_by_value(db, value, skip, limit):
         offset(skip).limit(limit).all()
 
 
+def get_image_by_post_id(db, id_post, skip, limit):
+    return db.query(models.PostImage).filter(models.PostImage.id_post == id_post). \
+        offset(skip).limit(limit).all()
+
+
+def create_post_image(db, image):
+    db_image = models.PostImage(**image)
+    db.add(db_image)
+    db.commit()
+    db.refresh(db_image)
+    return db_image
+
+
 def update_opportunity(db, opportunity: schemas.SchemeOpportunity):
     old_opportunity = get_opportunity_by_id(db, op_id=opportunity.id)
 
@@ -465,9 +478,10 @@ def get_previous_match_member(db: Session, skip: int = 0, limit: int = 100):
 
 
 def get_previous_match_member_by_porto_member(db: Session, porto_member_user_id: int, skip: int = 0, limit: int = 100):
-    return db.query(models.PreviousMatchMember).\
-        filter(models.PreviousMatchMember.porto_member_user_id == porto_member_user_id).offset(skip).\
+    return db.query(models.PreviousMatchMember). \
+        filter(models.PreviousMatchMember.porto_member_user_id == porto_member_user_id).offset(skip). \
         limit(limit).all()
+
 
 # endregion
 
