@@ -291,12 +291,16 @@ def read_posts_by_user_id(id_post: int, skip: int = 0, limit: int = 100, db: Ses
     return jsonable_encoder(db_post)
 
 
-@app.post("/v1/posts/image/{id_post}/", response_model=schemas.SchemePostImage, tags=["Post Image"])
+@app.post("/v1/posts/image/{id_post}/", tags=["Post Image"])
 def read_posts_by_user_id(id_post: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
-    image = {"id_post": id_post, "image": file.file, "filename": file.filename, "size": file.__sizeof__()}
-    db_post = crud.create_post_image(db, image=image)
+    image = {"id_post": id_post, "image": file.file.read(), "filename": file.filename, "size": file.__sizeof__()}
 
-    return jsonable_encoder(db_post)
+    try:
+        db_post = crud.create_post_image(db, image=image)
+        print(db_post)
+    except Exception:
+        return {"success": False, "detail": "Image could not be stored."}
+    return {"success": True, "detail": "Image stored successfully"}
 
 
 @app.put("/v1/posts/{id_post}/", tags=["Porto Member"])

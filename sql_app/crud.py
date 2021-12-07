@@ -427,7 +427,7 @@ def get_image_by_post_id(db, id_post, skip, limit):
 
 
 def create_post_image(db, image):
-    db_image = models.PostImage(**image.dict())
+    db_image = models.PostImage(**image)
     db.add(db_image)
     db.commit()
     db.refresh(db_image)
