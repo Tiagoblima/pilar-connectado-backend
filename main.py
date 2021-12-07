@@ -51,19 +51,8 @@ def get_db():
 
 @app.on_event("startup")
 @repeat_every(seconds=3600)  # 1 hour
-def inactivate_opportunities(skip: int = 0, limit: int = 100):
-    db = SessionLocal()
-    try:
-        db_opportunity = crud.get_opportunity(db, skip=skip, limit=limit)
-        for opportunity in db_opportunity:
-            now = datetime.today()
-            opportunity_end_date = datetime.strptime(opportunity.endDate, '%d/%m/%Y')
-            if opportunity_end_date < now and opportunity.isactive is True:
-                crud.update_active_status(db, opportunity, False)
-
-    except Exception as e:
-        print("Error: ", e.__str__())
-
+def inactivate_opportunities():
+    VerifyDateChange.VerifyDateChange.verify_change_date()
 
 
 # region REST USER
