@@ -14,47 +14,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 metadata = sqlalchemy.MetaData()
 
-# users = sqlalchemy.Table(
-#     "Users",
-#     metadata,
-#     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-#     sqlalchemy.Column("email", sqlalchemy.String),
-#     sqlalchemy.Column("password", sqlalchemy.Boolean),
-#     sqlalchemy.Column("name", sqlalchemy.String),
-#     sqlalchemy.Column("address", sqlalchemy.String),
-#     sqlalchemy.Column("cpf", sqlalchemy.String),
-#
-# )
-
-# posts = sqlalchemy.Table(
-#     "PilarMemberPost",
-#     metadata,
-#     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-#     sqlalchemy.Column("user_id", sqlalchemy.Integer, ForeignKey("Users.id"), index=True),
-#     sqlalchemy.Column("description", sqlalchemy.String),
-#     sqlalchemy.Column("rate", sqlalchemy.Integer),
-#
-#
-# )
-
-#
-#
-# def update(user_id, user_uptaded):
-#     """
-#     Atualiza o usuário no banco de dados
-#
-#     """
-#
-#     NotImplemented
-#
-#
-# def delete(user_id):
-#     """
-#     Deleta o usuário do banco de dados.
-#     """
-#
-#     NotImplemented
-
 
 security = HTTPBasic()
 
@@ -558,3 +517,15 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     return authenticate_user(db, username=credentials.username, password=credentials.password)
 
 # endregion
+
+
+def update_active_status(db, opportunity: schemas.SchemeOpportunity, status):
+    old_opportunity = get_opportunity_by_id(db, op_id=opportunity.id)
+
+    print("Chegou aqui")
+    if old_opportunity is None:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+
+    old_opportunity.isactive = status
+    db.commit()
+    return {"success": "bool(success)", "msg": ""}

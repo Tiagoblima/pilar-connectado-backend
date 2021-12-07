@@ -1,6 +1,10 @@
 import io
 from typing import List
 
+from datetime import datetime
+
+from fastapi_utils.tasks import repeat_every
+from fastapi import Depends, HTTPException
 from fastapi import Depends, HTTPException, UploadFile
 from fastapi import FastAPI, Body
 from fastapi.encoders import jsonable_encoder
@@ -13,6 +17,8 @@ from sql_app.crud import get_current_username
 from sql_app import crud, models, schemas
 from sql_app.database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
+
+import VerifyDateChange
 
 # Cors
 origins = [
@@ -45,6 +51,12 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+@app.on_event("startup")
+@repeat_every(seconds=3600)  # 1 hour
+def inactivate_opportunities():
+    VerifyDateChange.VerifyDateChange.verify_change_date()
 
 
 # region REST USER
